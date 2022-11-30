@@ -1,115 +1,188 @@
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 
 public class Manager {
-    Integer taskID;
-    Integer epicID;
-    Integer subtaskID;
-    HashMap<Integer, Task> taskHashMap;
-    HashMap<Integer, Epic> epicHashMap;
-    HashMap<Integer, Subtask> subtaskHashMap;
+    private Integer taskId;
+    private Integer epicId;
+    private Integer subtaskId;
+    private final HashMap<Integer, Task> taskHashMap;
+    private final HashMap<Integer, Epic> epicHashMap;
+    private final HashMap<Integer, Subtask> subtaskHashMap;
 
     public Manager() {
-        taskID = 100;
-        epicID = 200;
-        subtaskID = 300;
+        taskId = 100;
+        epicId = 200;
+        subtaskId = 300;
         taskHashMap = new HashMap<>();
         epicHashMap = new HashMap<>();
         subtaskHashMap = new HashMap<>();
     }
 
     public Collection<Task> getAllTasks() {
-        return taskHashMap.values();
+        if (!taskHashMap.isEmpty()) {
+            return taskHashMap.values();
+        }
+        System.out.println("Список задач пуст.");
+        return null;
     }
 
     public void deleteAllTasks() {
-        taskHashMap.clear();
+        if (taskHashMap.isEmpty()) {
+            System.out.println("Список задач пуст, удалять нечего.");
+        } else {
+            taskHashMap.clear();
+            System.out.println("Все задачи удалены.");
+        }
     }
 
-    public Task getTaskByID(Integer ID) {
-        return taskHashMap.get(ID);
+    public Task getTaskByID(Integer id) {
+        if (taskHashMap.containsKey(id)) {
+            System.out.println("Задача №" + id);
+            System.out.println(taskHashMap.get(id));
+            return taskHashMap.get(id);
+        }
+        System.out.println("Задачи №" + id + " нет.");
+        return null;
     }
 
     public int saveTask(Task task) {
-        task.setID(++taskID);
-        taskHashMap.put(task.getID(), task);
-        return taskID;
+        task.setId(++taskId);
+        taskHashMap.put(task.getId(), task);
+        System.out.println("Задача №" + taskId + " сохранена.");
+        return taskId;
     }
 
     public void updateTask(Task newTask) {
-        if (taskHashMap.containsKey(newTask.getID())) {
-            taskHashMap.put(newTask.getID(), newTask);
+        if (taskHashMap.containsKey(newTask.getId())) {
+            taskHashMap.put(newTask.getId(), newTask);
+            System.out.println("Задача №" + newTask.getId() + " обновлена.");
+            System.out.println("Новый список задач - " + getAllTasks());
+        } else {
+            System.out.println("Нельзя обновить задачу №" + newTask.getId() + ", так как ее нет.");
         }
     }
 
-    public void removeTaskByID(int ID) {
-        taskHashMap.remove(ID);
+    public void removeTaskByID(int id) {
+        if (taskHashMap.get(id) != null){
+            taskHashMap.remove(id);
+            System.out.println("Задача №" + id + " удалена.");
+            System.out.println("Новый список задач - " + getAllTasks());
+        } else {
+            System.out.println("Нельзя удалить задачу №" + id + ", так как ее нет.");
+        }
     }
 
     public Collection<Epic> getAllEpics() {
-        return epicHashMap.values();
+        if (!epicHashMap.isEmpty()) {
+            return epicHashMap.values();
+        }
+        System.out.println("Список эпиков пуст.");
+        return null;
     }
 
     public void deleteAllEpics() {
-        epicHashMap.clear();
+        if (epicHashMap.isEmpty()) {
+            System.out.println("Список эпиков пуст, нечего удалять.");
+        } else {
+            epicHashMap.clear();
+            System.out.println("Все эпики удалены.");
+        }
     }
 
-    public Task getEpicByID(Integer ID) {
-        return epicHashMap.get(ID);
+    public Task getEpicByID(Integer id) {
+        if (epicHashMap.get(id) != null) {
+            System.out.println("Эпик №" + id);
+            System.out.println(epicHashMap.get(id));
+            return epicHashMap.get(id);
+        }
+        System.out.println("Эпика №" + id + " нет.");
+        return null;
     }
 
     public int saveEpic(Epic epic) {
-        epic.setID(++epicID);
-        epicHashMap.put(epic.getID(), epic);
-        return epicID;
+        epic.setId(++epicId);
+        epicHashMap.put(epic.getId(), epic);
+        System.out.println("Эпик №" + epicId + " сохранен.");
+        return epicId;
     }
 
     public void updateEpic(Epic newEpic) {
-        if (taskHashMap.containsKey(newEpic.getID())) {
-            taskHashMap.put(newEpic.getID(), newEpic);
+        if (epicHashMap.containsKey(newEpic.getId())) {
+            ArrayList<Subtask> newSubtask = epicHashMap.get(newEpic.getId()).subtaskList;
+            newEpic.subtaskList.addAll(newSubtask);
+            epicHashMap.put(newEpic.getId(), newEpic);
+            System.out.println("Эпик №" + newEpic.getId() + " обновлен.");
+            System.out.println("Новый список эпиков - " + getAllEpics());
+        } else {
+            System.out.println("Нельзя обновить эпик №" + newEpic.getId() + ", так как его нет.");
         }
     }
 
-    public void removeEpicByID(int ID) {
-        for (int i = 0; i < epicHashMap.get(ID).subtaskList.size(); i++) {
-            subtaskHashMap.remove(epicHashMap.get(ID).subtaskList.get(i).getID());
+    public void removeEpicByID(int id) {
+        if (epicHashMap.get(id) != null) {
+            for (int i = 0; i < epicHashMap.get(id).subtaskList.size(); i++) {
+                subtaskHashMap.remove(epicHashMap.get(id).subtaskList.get(i).getId());
+            }
+            epicHashMap.remove(id);
+            System.out.println("Эпик №" + id + " удален.");
+            System.out.println("Новый список эпиков - " + getAllEpics());
+        } else {
+            System.out.println("Нельзя удалить эпик №" + id + ", так как его нет.");
         }
-        epicHashMap.remove(ID);
     }
 
-    public String getEpicSubtasks(int epicID){
-        return Arrays.toString(epicHashMap.get(epicID).subtaskList.toArray());
+    public String getEpicSubtasks(int epicId){
+        if (!epicHashMap.get(epicId).subtaskList.isEmpty()) {
+            System.out.println("Список подзадач эпика № " + epicId + " - "
+                    + Arrays.toString(epicHashMap.get(epicId).subtaskList.toArray()));
+            return Arrays.toString(epicHashMap.get(epicId).subtaskList.toArray());
+        }
+        System.out.println("Список подзадач эпика №" + epicId + "пуст.");
+        return null;
     }
 
     public Collection<Subtask> getAllSubtasks() {
-        return subtaskHashMap.values();
+        if (!subtaskHashMap.isEmpty()) {
+            return subtaskHashMap.values();
+        }
+        System.out.println("Список подзадач пуст.");
+        return null;
     }
 
     public void deleteAllSubtasks() {
-        subtaskHashMap.clear();
+        if (!subtaskHashMap.isEmpty()) {
+            subtaskHashMap.clear();
+            System.out.println("Все подзадачи удалены.");
+        } else {
+            System.out.println("Список подзадач пуст, нечего удалять.");
+        }
     }
 
-    public Task getSubtaskByID(Integer ID) {
-        return subtaskHashMap.get(ID);
+    public Task getSubtaskByID(Integer id) {
+        if (subtaskHashMap.get(id) != null) {
+            System.out.println("Подзадача №" + id);
+            System.out.println(subtaskHashMap.get(id));
+            return subtaskHashMap.get(id);
+        }
+        System.out.println("Подадачи №" + id + " нет.");
+        return null;
     }
 
     public int saveSubtask(Subtask subtask) {
-        subtask.setID(++subtaskID);
-        subtaskHashMap.put(subtask.getID(), subtask);
+        subtask.setId(++subtaskId);
+        subtaskHashMap.put(subtask.getId(), subtask);
         epicHashMap.get(subtask.getEpicId()).fillSubtaskIList(subtask, epicHashMap.get(subtask.getEpicId()));
         epicStatusCheck();
-        return subtaskID;
+        System.out.println("Подзадача №" + subtaskId + " сохранена.");
+        return subtaskId;
     }
 
     public void updateSubtask(Subtask newSubtask) {
-        if (subtaskHashMap.containsKey(newSubtask.getID())) {
-            subtaskHashMap.put(newSubtask.getID(), newSubtask);
+        if (subtaskHashMap.containsKey(newSubtask.getId())) {
+            subtaskHashMap.put(newSubtask.getId(), newSubtask);
             if (epicHashMap.containsKey(newSubtask.getEpicId())) {
                 for (int i = 0; i < epicHashMap.get(newSubtask.getEpicId()).subtaskList.size(); i++) {
-                    if (Objects.equals(epicHashMap.get(newSubtask.getEpicId()).subtaskList.get(i).getID(),
-                            newSubtask.getID())) {
+                    if (Objects.equals(epicHashMap.get(newSubtask.getEpicId()).subtaskList.get(i).getId(),
+                            newSubtask.getId())) {
                         epicHashMap.get(newSubtask.getEpicId()).subtaskList.remove(i);
                         break;
                     }
@@ -117,48 +190,66 @@ public class Manager {
                 epicHashMap.get(newSubtask.getEpicId()).fillSubtaskIList(newSubtask,
                         epicHashMap.get(newSubtask.getEpicId()));
             }
+            epicStatusCheck();
+            System.out.println("Подзадача №" + newSubtask.getId() + " обновлена.");
+            System.out.println("Новый список подзадач - " + getAllSubtasks());
+        } else {
+            System.out.println("Нельзя обновить подзадачу №" + newSubtask.getId() + ", так как ее нет.");
         }
-        epicStatusCheck();
     }
 
-    public void removeSubtaskByID(int ID) {
-        int epicID = subtaskHashMap.get(ID).getEpicId();
-        epicHashMap.get(epicID).subtaskList.remove(ID);
-        subtaskHashMap.remove(ID);
+    public void removeSubtaskByID(int id) {
+        if (subtaskHashMap.containsKey(id)) {
+            int epicID = subtaskHashMap.get(id).getEpicId();
+            for (int i = 0; i < epicHashMap.get(epicID).subtaskList.size(); i++) {
+                if (subtaskHashMap.get(id) == epicHashMap.get(epicID).subtaskList.get(i)) {
+                    epicHashMap.get(epicID).subtaskList.remove(i);
+                    break;
+                }
+            }
+            subtaskHashMap.remove(id);
+            System.out.println("Подзадача №" + id + " удалена.");
+            if (subtaskHashMap.isEmpty()) {
+                System.out.println("Список подзадач теперь пуст.");
+            } else {
+                System.out.println("Новый список подзадач - " + getAllSubtasks());
+            }
+        } else {
+            System.out.println("Нельзя удалить подзадачу №" + id + ", так как ее нет.");
+        }
     }
 
     public void epicStatusCheck() {
-        Subtask subtask;
-        String statusOfSubtask;
+        Status statusOfSubtask;
         int statusNew = 0;
         int statusDone = 0;
         int amountOfSubtasks = 0;
         for (int key : epicHashMap.keySet()) {
-            for (int i = 0; i < epicHashMap.get(key).subtaskList.size(); i++) {
-                if (epicHashMap.get(key).subtaskList.size() == 0) {
-                    epicHashMap.get(key).status = "NEW";
-                    return;
-                } else {
+            if (epicHashMap.get(key).subtaskList.size() == 0) {
+                epicHashMap.get(key).status = Status.NEW;
+                return;
+            } else {
+                for (int i = 0; i < epicHashMap.get(key).subtaskList.size(); i++) {
                     amountOfSubtasks = epicHashMap.get(key).subtaskList.size();
-                    subtask = epicHashMap.get(key).subtaskList.get(i);
-                    statusOfSubtask = subtask.status;
-                    if (statusOfSubtask.equals("NEW")) {
-                        statusNew++;
-                    } else if (statusOfSubtask.equals("DONE")) {
-                        statusDone++;
+                    statusOfSubtask = epicHashMap.get(key).subtaskList.get(i).status;
+                    switch (statusOfSubtask) {
+                        case NEW -> statusNew++;
+                        case DONE -> statusDone++;
                     }
                 }
-            }
 
-            if (amountOfSubtasks == statusNew) {
-                epicHashMap.get(key).status = "NEW";
-            } else if (amountOfSubtasks == statusDone) {
-                epicHashMap.get(key).status = "DONE";
-            } else {
-                epicHashMap.get(key).status = "IN_PROGRESS";
+                if (amountOfSubtasks == statusNew) {
+                    epicHashMap.get(key).status = Status.NEW;
+                } else if (amountOfSubtasks == statusDone && epicHashMap.get(key).status != Status.DONE) {
+                    epicHashMap.get(key).status = Status.DONE;
+                    System.out.println("Статус эпика " + key + " изменен на DONE.");
+                } else if (epicHashMap.get(key).status != Status.IN_PROGRESS) {
+                    epicHashMap.get(key).status = Status.IN_PROGRESS;
+                    System.out.println("Статус эпика " + key + " изменен на IN_PROGRESS.");
+                }
+                statusNew = 0;
+                statusDone = 0;
             }
-            statusNew = 0;
-            statusDone = 0;
         }
     }
 }

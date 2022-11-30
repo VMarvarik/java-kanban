@@ -1,7 +1,7 @@
 public class Subtask extends Task {
     private Integer epicId;
-    private  Integer ID;
-    public Subtask(String name, String description, String status) {
+
+    public Subtask(String name, String description, Status status) {
         super(name, description, status);
     }
 
@@ -14,18 +14,8 @@ public class Subtask extends Task {
     }
 
     @Override
-    public Integer getID() {
-        return ID;
-    }
-
-    @Override
-    public void setID(Integer ID) {
-        this.ID = ID;
-    }
-
-    @Override
     public String toString() {
-        return "EpicID:" + epicId + ", ID:" + ID + ", название:<" + name + ">, описание:<"
+        return "EpicID:" + epicId + ", ID:" + super.getId() + ", название:<" + name + ">, описание:<"
                 + description + ">, статус:<" + status + ">.";
     }
 }

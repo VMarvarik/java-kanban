@@ -1,25 +1,25 @@
 public class Task {
-    private Integer ID;
+    private Integer id;
     public String name;
     public String description;
-    public String status;
+    public Status status;
 
-    public Task(String name, String description, String status) {
+    public Task(String name, String description, Status status) {
         this.name = name;
         this.description = description;
         this.status = status;
     }
 
-    public Integer getID() {
-        return ID;
+    public Integer getId() {
+        return id;
     }
 
-    public void setID(Integer ID) {
-        this.ID = ID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     @Override
     public String toString() {
-        return "ID:" + ID + ", название:<" + name + ">, описание:<" + description + ">, статус:<" + status + ">.";
+        return "ID:" + id + ", название:<" + name + ">, описание:<" + description + ">, статус:<" + status + ">.";
     }
 }
