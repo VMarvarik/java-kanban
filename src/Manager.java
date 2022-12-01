@@ -140,12 +140,15 @@ public class Manager {
         return null;
     }
 
-    public Collection<Subtask> getAllSubtasks() {
-        if (!subtaskHashMap.isEmpty()) {
-            return subtaskHashMap.values();
+    public void getAllSubtasks() {
+        if (!subtaskHashMap.isEmpty() && !epicHashMap.isEmpty()) {
+            for (int key : epicHashMap.keySet()) {
+                System.out.println("Epic ID: " + epicHashMap.get(key).getId());
+                System.out.println(epicHashMap.get(key).subtaskList);
+            }
+        } else {
+            System.out.println("Список подзадач пуст.");
         }
-        System.out.println("Список подзадач пуст.");
-        return null;
     }
 
     public void deleteAllSubtasks() {
@@ -163,7 +166,7 @@ public class Manager {
             System.out.println(subtaskHashMap.get(id));
             return subtaskHashMap.get(id);
         }
-        System.out.println("Подадачи №" + id + " нет.");
+        System.out.println("Подзадачи №" + id + " нет.");
         return null;
     }
 
@@ -192,7 +195,8 @@ public class Manager {
             }
             epicStatusCheck();
             System.out.println("Подзадача №" + newSubtask.getId() + " обновлена.");
-            System.out.println("Новый список подзадач - " + getAllSubtasks());
+            System.out.println("Новый список подзадач - ");
+            getAllSubtasks();
         } else {
             System.out.println("Нельзя обновить подзадачу №" + newSubtask.getId() + ", так как ее нет.");
         }
@@ -212,7 +216,8 @@ public class Manager {
             if (subtaskHashMap.isEmpty()) {
                 System.out.println("Список подзадач теперь пуст.");
             } else {
-                System.out.println("Новый список подзадач - " + getAllSubtasks());
+                System.out.println("Новый список подзадач - ");
+                getAllSubtasks();
             }
         } else {
             System.out.println("Нельзя удалить подзадачу №" + id + ", так как ее нет.");
