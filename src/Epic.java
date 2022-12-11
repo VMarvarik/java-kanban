@@ -15,7 +15,7 @@ public class Epic extends Task {
     @Override
     public String toString() {
         String result;
-        result = "\nEpicID:" + super.getId() + ", название:<" + name + ">, описание:<" + description + ">, статус:<" + status
+        result = "EpicID:" + super.getId() + ", название:<" + name + ">, описание:<" + description + ">, статус:<" + status
                 + ">, подзадачи:" + "\n";
         if (subtaskList.isEmpty()) {
             result += "<список подзадач пока пуст";

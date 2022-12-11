@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Manager {
+public class InMemoryTaskManager implements TaskManager {
     private Integer taskId;
     private Integer epicId;
     private Integer subtaskId;
@@ -8,7 +8,7 @@ public class Manager {
     private final HashMap<Integer, Epic> epicHashMap;
     private final HashMap<Integer, Subtask> subtaskHashMap;
 
-    public Manager() {
+    public InMemoryTaskManager() {
         taskId = 100;
         epicId = 200;
         subtaskId = 300;
@@ -17,6 +17,7 @@ public class Manager {
         subtaskHashMap = new HashMap<>();
     }
 
+    @Override
     public Collection<Task> getAllTasks() {
         if (!taskHashMap.isEmpty()) {
             return taskHashMap.values();
@@ -25,6 +26,7 @@ public class Manager {
         return null;
     }
 
+    @Override
     public void deleteAllTasks() {
         if (taskHashMap.isEmpty()) {
             System.out.println("Список задач пуст, удалять нечего.");
@@ -34,16 +36,19 @@ public class Manager {
         }
     }
 
+    @Override
     public Task getTaskByID(Integer id) {
         if (taskHashMap.containsKey(id)) {
             System.out.println("Задача №" + id);
             System.out.println(taskHashMap.get(id));
+            Managers.getDefaultHistory().add(taskHashMap.get(id));
             return taskHashMap.get(id);
         }
         System.out.println("Задачи №" + id + " нет.");
         return null;
     }
 
+    @Override
     public int saveTask(Task task) {
         task.setId(++taskId);
         taskHashMap.put(task.getId(), task);
@@ -51,6 +56,7 @@ public class Manager {
         return taskId;
     }
 
+    @Override
     public void updateTask(Task newTask) {
         if (taskHashMap.containsKey(newTask.getId())) {
             taskHashMap.put(newTask.getId(), newTask);
@@ -61,6 +67,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void removeTaskByID(int id) {
         if (taskHashMap.get(id) != null){
             taskHashMap.remove(id);
@@ -71,6 +78,7 @@ public class Manager {
         }
     }
 
+    @Override
     public Collection<Epic> getAllEpics() {
         if (!epicHashMap.isEmpty()) {
             return epicHashMap.values();
@@ -79,6 +87,7 @@ public class Manager {
         return null;
     }
 
+    @Override
     public void deleteAllEpics() {
         if (epicHashMap.isEmpty()) {
             System.out.println("Список эпиков пуст, нечего удалять.");
@@ -88,16 +97,19 @@ public class Manager {
         }
     }
 
+    @Override
     public Task getEpicByID(Integer id) {
         if (epicHashMap.get(id) != null) {
             System.out.println("Эпик №" + id);
             System.out.println(epicHashMap.get(id));
+            Managers.getDefaultHistory().add(epicHashMap.get(id));
             return epicHashMap.get(id);
         }
         System.out.println("Эпика №" + id + " нет.");
         return null;
     }
 
+    @Override
     public int saveEpic(Epic epic) {
         epic.setId(++epicId);
         epicHashMap.put(epic.getId(), epic);
@@ -105,6 +117,7 @@ public class Manager {
         return epicId;
     }
 
+    @Override
     public void updateEpic(Epic newEpic) {
         if (epicHashMap.containsKey(newEpic.getId())) {
             ArrayList<Subtask> newSubtask = epicHashMap.get(newEpic.getId()).subtaskList;
@@ -117,6 +130,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void removeEpicByID(int id) {
         if (epicHashMap.get(id) != null) {
             for (int i = 0; i < epicHashMap.get(id).subtaskList.size(); i++) {
@@ -130,6 +144,7 @@ public class Manager {
         }
     }
 
+    @Override
     public String getEpicSubtasks(int epicId){
         if (!epicHashMap.get(epicId).subtaskList.isEmpty()) {
             System.out.println("Список подзадач эпика № " + epicId + " - "
@@ -140,6 +155,7 @@ public class Manager {
         return null;
     }
 
+    @Override
     public void getAllSubtasks() {
         if (!subtaskHashMap.isEmpty() && !epicHashMap.isEmpty()) {
             for (int key : epicHashMap.keySet()) {
@@ -151,6 +167,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void deleteAllSubtasks() {
         if (!subtaskHashMap.isEmpty()) {
             subtaskHashMap.clear();
@@ -160,16 +177,19 @@ public class Manager {
         }
     }
 
+    @Override
     public Task getSubtaskByID(Integer id) {
         if (subtaskHashMap.get(id) != null) {
             System.out.println("Подзадача №" + id);
             System.out.println(subtaskHashMap.get(id));
+            Managers.getDefaultHistory().add(subtaskHashMap.get(id));
             return subtaskHashMap.get(id);
         }
         System.out.println("Подзадачи №" + id + " нет.");
         return null;
     }
 
+    @Override
     public int saveSubtask(Subtask subtask) {
         subtask.setId(++subtaskId);
         subtaskHashMap.put(subtask.getId(), subtask);
@@ -179,6 +199,7 @@ public class Manager {
         return subtaskId;
     }
 
+    @Override
     public void updateSubtask(Subtask newSubtask) {
         if (subtaskHashMap.containsKey(newSubtask.getId())) {
             subtaskHashMap.put(newSubtask.getId(), newSubtask);
@@ -202,6 +223,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void removeSubtaskByID(int id) {
         if (subtaskHashMap.containsKey(id)) {
             int epicID = subtaskHashMap.get(id).getEpicId();
@@ -224,6 +246,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void epicStatusCheck() {
         Status statusOfSubtask;
         int statusNew = 0;
