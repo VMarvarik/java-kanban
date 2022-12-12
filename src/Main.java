@@ -1,4 +1,13 @@
-//Семен, здравствуйте! С наступающим!
+import TaskAppRealization.*;
+
+//Семен, снова здравствуйте! :) Когда писала программу, не подумала о том, что кто-то может создать подзадачу и
+// не привязать ее к эпику. Решила это через добавление параметра в конструктор и дополнительной проверки
+// в методе saveSubtask на наличие такого epicId. Вопрос "Почему для реализации выбрала ArrayList<>()?" -
+// немножко не поняла, но сделала просто лист как объект ArrayList. Мне кажется, что проверка на null не нужна,
+// так как метод используется в методах saveTask, saveEpic, saveSubtask уже после встроенной проверки на null,
+// но я все равно ее добавила, так как метод можно вызвать в main.
+// Не могу понять как возвращать классы в Managers без их объявления, получается только каждый раз возвращать новый объект...
+// Нашла ошибки вызовов методов в мейн, исправила.
 public class Main {
     public static void main(String[] args) {
         Task task1 = new Task("1", "1", Status.NEW);
@@ -14,9 +23,9 @@ public class Main {
         Task task6 = new Task("6", "6", Status.NEW);
         int id6 = Managers.getDefault().saveTask(task6);
         Epic epic1 = new Epic("7", "7", Status.NEW);
-        int id7 = Managers.getDefault().saveTask(epic1);
-        Subtask subtask1 = new Subtask("8", "8", Status.NEW);
-        int id8 = Managers.getDefault().saveTask(subtask1);
+        int id7 = Managers.getDefault().saveEpic(epic1);
+        Subtask subtask1 = new Subtask("8", "8", Status.NEW, id7);
+        int id8 = Managers.getDefault().saveSubtask(subtask1);
         System.out.println("Вызываем таски 1, 2, 3, 4, 5, 6. Вызываем эпик 7 и сабтаск 8.");
         Managers.getDefault().getTaskByID(id1);
         Managers.getDefault().getTaskByID(id2);
@@ -24,8 +33,8 @@ public class Main {
         Managers.getDefault().getTaskByID(id4);
         Managers.getDefault().getTaskByID(id5);
         Managers.getDefault().getTaskByID(id6);
-        Managers.getDefault().getTaskByID(id7);
-        Managers.getDefault().getTaskByID(id8);
+        Managers.getDefault().getEpicByID(id7);
+        Managers.getDefault().getSubtaskByID(id8);
         System.out.println("Вызываем историю просмотров.");
         System.out.println(Managers.getDefaultHistory().getHistory());
         System.out.println("Вызываем таски 1, 2, 3. ");

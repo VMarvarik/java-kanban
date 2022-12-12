@@ -1,3 +1,6 @@
+package TaskAppRealization;
+import HistoryFunctionalityRealization.InMemoryHistoryManager;
+
 public final class Managers {
     static InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
     static InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();

@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+package TaskAppRealization;
 import java.util.Collection;
 
 public interface TaskManager {
@@ -6,7 +6,7 @@ public interface TaskManager {
 
     void deleteAllTasks();
 
-    Task getTaskByID(Integer id);
+    Task getTaskByID(int id);
 
     int saveTask(Task task);
 
@@ -18,7 +18,7 @@ public interface TaskManager {
 
     void deleteAllEpics();
 
-    Task getEpicByID(Integer id);
+    Task getEpicByID(int id);
 
     int saveEpic(Epic epic);
 
@@ -32,7 +32,7 @@ public interface TaskManager {
 
     void deleteAllSubtasks();
 
-    Task getSubtaskByID(Integer id);
+    Task getSubtaskByID(int id);
 
     int saveSubtask(Subtask subtask);
 

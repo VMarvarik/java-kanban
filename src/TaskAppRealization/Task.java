@@ -1,6 +1,8 @@
+package TaskAppRealization;
+
 public class Task {
 
-    private Integer id;
+    private int id;
 
     public String name;
 
@@ -18,13 +20,13 @@ public class Task {
 
     }
 
-    public Integer getId() {
+    public int getId() {
 
         return id;
 
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
 
         this.id = id;
 
@@ -34,7 +36,7 @@ public class Task {
 
     public String toString() {
 
-        return "ID:" + id + ", название:<" + name + ">, описание:<" + description + ">, статус:<" + status + ">.";
+        return "TaskId:" + id + ", название:<" + name + ">, описание:<" + description + ">, статус:<" + status + ">.";
 
     }
 }

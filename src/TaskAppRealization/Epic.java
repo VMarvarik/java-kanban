@@ -1,11 +1,16 @@
+package TaskAppRealization;
 import java.util.ArrayList;
 
 public class Epic extends Task {
-    public ArrayList<Subtask> subtaskList;
+    private ArrayList<Subtask> subtaskList;
 
     public Epic(String name, String description, Status status) {
         super(name, description, status);
         subtaskList = new ArrayList<>();
+    }
+
+    public ArrayList<Subtask> getSubtaskList() {
+        return subtaskList;
     }
 
     public void fillSubtaskIList(Subtask subtask, Epic epic) {
