@@ -1,4 +1,4 @@
-package TaskAppRealization;
+package TaskAppClasses;
 
 public enum Status {
     NEW,

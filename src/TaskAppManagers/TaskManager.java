@@ -1,4 +1,7 @@
-package TaskAppRealization;
+package TaskAppManagers;
+
+import TaskAppClasses.*;
+
 import java.util.Collection;
 
 public interface TaskManager {

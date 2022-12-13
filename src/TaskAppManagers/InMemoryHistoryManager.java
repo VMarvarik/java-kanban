@@ -1,16 +1,15 @@
-package HistoryFunctionalityRealization;
-import TaskAppRealization.Task;
-import java.util.ArrayList;
+package TaskAppManagers;
+import TaskAppClasses.Task;
+
+import java.util.LinkedList;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private List<Task> browsingHistory = new ArrayList<>();
+    private final List<Task> browsingHistory = new LinkedList<>();
 
     @Override
     public void add(Task task) {
-        if (task == null) {
-            System.out.println("Задача не может быть пустой!");
-        } else {
+        if (task != null) {
             browsingHistory.add(task);
             final int MAX_HISTORY_SIZE = 10;
             if (browsingHistory.size() > MAX_HISTORY_SIZE) {

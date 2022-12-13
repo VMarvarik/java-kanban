@@ -1,4 +1,5 @@
-package TaskAppRealization;
+package TaskAppManagers;
+import TaskAppClasses.*;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -8,6 +9,12 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> taskHashMap = new HashMap<>();
     private final HashMap<Integer, Epic> epicHashMap = new HashMap<>();
     private final HashMap<Integer, Subtask> subtaskHashMap = new HashMap<>();
+    private final InMemoryHistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
+    private final List<Task> history = inMemoryHistoryManager.getHistory();
+
+    public List<Task> getHistory() {
+        return history;
+    }
 
     @Override
     public Collection<Task> getAllTasks() {
@@ -33,7 +40,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (taskHashMap.containsKey(id)) {
             System.out.println("Задача №" + id);
             System.out.println(taskHashMap.get(id));
-            Managers.getDefaultHistory().add(taskHashMap.get(id));
+            inMemoryHistoryManager.add(taskHashMap.get(id));
             return taskHashMap.get(id);
         }
         System.out.println("Задачи №" + id + " нет.");
@@ -94,7 +101,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epicHashMap.get(id) != null) {
             System.out.println("Эпик №" + id);
             System.out.println(epicHashMap.get(id));
-            Managers.getDefaultHistory().add(epicHashMap.get(id));
+            inMemoryHistoryManager.add(epicHashMap.get(id));
             return epicHashMap.get(id);
         }
         System.out.println("Эпика №" + id + " нет.");
@@ -151,7 +158,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void getAllSubtasks() {
         if (!subtaskHashMap.isEmpty() && !epicHashMap.isEmpty()) {
             for (int key : epicHashMap.keySet()) {
-                System.out.println("TaskAppRealization.Epic ID: " + epicHashMap.get(key).getId());
+                System.out.println("TaskClasses.Epic ID: " + epicHashMap.get(key).getId());
                 System.out.println(epicHashMap.get(key).getSubtaskList());
             }
         } else {
@@ -174,7 +181,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtaskHashMap.get(id) != null) {
             System.out.println("Подзадача №" + id);
             System.out.println(subtaskHashMap.get(id));
-            Managers.getDefaultHistory().add(subtaskHashMap.get(id));
+            inMemoryHistoryManager.add(subtaskHashMap.get(id));
             return subtaskHashMap.get(id);
         }
         System.out.println("Подзадачи №" + id + " нет.");
@@ -251,12 +258,12 @@ public class InMemoryTaskManager implements TaskManager {
         int amountOfSubtasks = 0;
         for (int key : epicHashMap.keySet()) {
             if (epicHashMap.get(key).getSubtaskList().size() == 0) {
-                epicHashMap.get(key).status = Status.NEW;
+                epicHashMap.get(key).setStatus(Status.NEW);
                 return;
             } else {
                 for (int i = 0; i < epicHashMap.get(key).getSubtaskList().size(); i++) {
                     amountOfSubtasks = epicHashMap.get(key).getSubtaskList().size();
-                    statusOfSubtask = epicHashMap.get(key).getSubtaskList().get(i).status;
+                    statusOfSubtask = epicHashMap.get(key).getSubtaskList().get(i).getStatus();
                     switch (statusOfSubtask) {
                         case NEW -> statusNew++;
                         case DONE -> statusDone++;
@@ -264,12 +271,12 @@ public class InMemoryTaskManager implements TaskManager {
                 }
 
                 if (amountOfSubtasks == statusNew) {
-                    epicHashMap.get(key).status = Status.NEW;
-                } else if (amountOfSubtasks == statusDone && epicHashMap.get(key).status != Status.DONE) {
-                    epicHashMap.get(key).status = Status.DONE;
+                    epicHashMap.get(key).setStatus(Status.NEW);
+                } else if (amountOfSubtasks == statusDone && epicHashMap.get(key).getStatus() != Status.DONE) {
+                    epicHashMap.get(key).setStatus(Status.DONE);
                     System.out.println("Статус эпика " + key + " изменен на DONE.");
-                } else if (epicHashMap.get(key).status != Status.IN_PROGRESS) {
-                    epicHashMap.get(key).status = Status.IN_PROGRESS;
+                } else if (epicHashMap.get(key).getStatus() != Status.IN_PROGRESS) {
+                    epicHashMap.get(key).setStatus(Status.IN_PROGRESS);
                     System.out.println("Статус эпика " + key + " изменен на IN_PROGRESS.");
                 }
                 statusNew = 0;

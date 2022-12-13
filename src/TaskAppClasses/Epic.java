@@ -1,8 +1,9 @@
-package TaskAppRealization;
+package TaskAppClasses;
+
 import java.util.ArrayList;
 
 public class Epic extends Task {
-    private ArrayList<Subtask> subtaskList;
+    private final ArrayList<Subtask> subtaskList;
 
     public Epic(String name, String description, Status status) {
         super(name, description, status);

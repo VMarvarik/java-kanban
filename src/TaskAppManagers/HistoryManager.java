@@ -1,5 +1,5 @@
-package HistoryFunctionalityRealization;
-import TaskAppRealization.Task;
+package TaskAppManagers;
+import TaskAppClasses.Task;
 import java.util.List;
 
 public interface HistoryManager {

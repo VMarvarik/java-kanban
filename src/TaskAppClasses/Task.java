@@ -1,14 +1,13 @@
-package TaskAppRealization;
+package TaskAppClasses;
 
 public class Task {
-
     private int id;
 
-    public String name;
+    protected String name;
 
-    public String description;
+    protected String description;
 
-    public Status status;
+    protected Status status;
 
     public Task(String name, String description, Status status) {
 
@@ -21,15 +20,19 @@ public class Task {
     }
 
     public int getId() {
-
         return id;
-
     }
 
     public void setId(int id) {
-
         this.id = id;
+    }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @Override
