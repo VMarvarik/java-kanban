@@ -1,6 +1,7 @@
 import TaskAppManagers.InMemoryTaskManager;
 import TaskAppManagers.Managers;
 import TaskAppClasses.*;
+//Здравствуйте, Семен! С наступившим 2023 годом и рождеством! Желаю, чтобы этот год был полон счастья и хороших учеников :)
 public class Main {
     public static void main(String[] args) {
         InMemoryTaskManager inMemoryTaskManager = Managers.getDefault();
@@ -33,10 +34,11 @@ public class Main {
         inMemoryTaskManager.getTaskByID(id6);
         System.out.println("Вызываем историю. Она должна быть 1 2 3 4 5 7 8 6");
         System.out.println(inMemoryTaskManager.getHistory());
-        System.out.println("Удаляем таск 2 и сабтаск 8");
+        System.out.println("Удаляем таск 1, 2 и сабтаск 8");
+        inMemoryTaskManager.removeTaskByID(id1);
         inMemoryTaskManager.removeTaskByID(id2);
         inMemoryTaskManager.removeSubtaskByID(id8);
-        System.out.println("Вызываем историю. Она должна быть 1 3 4 5 7 6");
+        System.out.println("Вызываем историю. Она должна быть 3 4 5 7 6");
         System.out.println(inMemoryTaskManager.getHistory());
     }
 }

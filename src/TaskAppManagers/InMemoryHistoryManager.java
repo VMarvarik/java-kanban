@@ -72,6 +72,10 @@ class CustomLinkedList <T> {
     }
 
     public void removeNode(Node node) {
+        if (node.getLinkPrev() == null) {
+            removeFirst();
+            return;
+        }
         if (node.getLinkNext() != null) {
             node.getLinkPrev().setLinkNext(node.getLinkNext());
         } else {
