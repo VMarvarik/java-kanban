@@ -1,8 +1,6 @@
 import TaskAppManagers.InMemoryTaskManager;
 import TaskAppManagers.Managers;
 import TaskAppClasses.*;
-//Здравствуйте, Семен! Вроде бы все исправила!
-
 public class Main {
     public static void main(String[] args) {
         InMemoryTaskManager inMemoryTaskManager = Managers.getDefault();
@@ -22,7 +20,7 @@ public class Main {
         int id7 = inMemoryTaskManager.saveEpic(epic1);
         Subtask subtask1 = new Subtask("8", "8", Status.NEW, id7);
         int id8 = inMemoryTaskManager.saveSubtask(subtask1);
-        System.out.println("Вызываем таски 1, 2, 3, 4, 5, 6. Вызываем эпик 7 и сабтаск 8.");
+        inMemoryTaskManager.getTaskByID(id1);
         inMemoryTaskManager.getTaskByID(id1);
         inMemoryTaskManager.getTaskByID(id2);
         inMemoryTaskManager.getTaskByID(id3);
@@ -31,14 +29,14 @@ public class Main {
         inMemoryTaskManager.getTaskByID(id6);
         inMemoryTaskManager.getEpicByID(id7);
         inMemoryTaskManager.getSubtaskByID(id8);
-        System.out.println("Вызываем историю просмотров.");
+        inMemoryTaskManager.getTaskByID(id6);
+        inMemoryTaskManager.getTaskByID(id6);
+        System.out.println("Вызываем историю. Она должна быть 1 2 3 4 5 7 8 6");
         System.out.println(inMemoryTaskManager.getHistory());
-        System.out.println("Вызываем таски 1, 2, 3. ");
-        inMemoryTaskManager.getTaskByID(id1);
-        inMemoryTaskManager.getTaskByID(id2);
-        inMemoryTaskManager.getTaskByID(id3);
-        System.out.println("Взываем историю просмотров. " +
-                "История просмотров теперь должна быть - 2, 3, 4, 5, 6, 7, 8, 1, 2, 3");
+        System.out.println("Удаляем таск 2 и сабтаск 8");
+        inMemoryTaskManager.removeTaskByID(id2);
+        inMemoryTaskManager.removeSubtaskByID(id8);
+        System.out.println("Вызываем историю. Она должна быть 1 3 4 5 7 6");
         System.out.println(inMemoryTaskManager.getHistory());
     }
 }
