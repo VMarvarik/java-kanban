@@ -135,10 +135,12 @@ public class InMemoryTaskManager implements TaskManager {
             for (int i = 0; i < epicHashMap.get(epicId).getSubtaskList().size(); i++) {
                 subtaskHashMap.remove(epicHashMap.get(epicId).getSubtaskList().get(i).getId());
             }
-            epicHashMap.remove(epicId);
             inMemoryHistoryManager.remove(epicId);
+            epicHashMap.remove(epicId);
             System.out.println("Эпик №" + epicId + " удален.");
-            System.out.println("Новый список эпиков - " + getAllEpics());
+            if (getAllEpics() != null) {
+                System.out.println("Новый список эпиков - " + getAllEpics());
+            }
         } else {
             System.out.println("Нельзя удалить эпик №" + epicId + ", так как его нет.");
         }
@@ -230,6 +232,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeSubtaskByID(int id) {
+        inMemoryHistoryManager.remove(id);
         if (subtaskHashMap.containsKey(id)) {
             int epicID = subtaskHashMap.get(id).getEpicId();
             for (int i = 0; i < epicHashMap.get(epicID).getSubtaskList().size(); i++) {
@@ -239,7 +242,6 @@ public class InMemoryTaskManager implements TaskManager {
                 }
             }
             subtaskHashMap.remove(id);
-            inMemoryHistoryManager.remove(subtaskId);
             System.out.println("Подзадача №" + id + " удалена.");
             if (subtaskHashMap.isEmpty()) {
                 System.out.println("Список подзадач теперь пуст.");

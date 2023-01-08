@@ -1,7 +1,7 @@
 package TaskAppClasses;
 
 public class Node {
-    Task task;
+    private Task task;
     private Node linkNext;
     private Node linkPrev;
 
