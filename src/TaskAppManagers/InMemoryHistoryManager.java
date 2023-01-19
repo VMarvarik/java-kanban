@@ -25,6 +25,9 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public ArrayList<Task> getHistory() {
+        if (browsingHistory.getSize() == -1) {
+            return null;
+        }
         return browsingHistory.getTasks();
     }
 }

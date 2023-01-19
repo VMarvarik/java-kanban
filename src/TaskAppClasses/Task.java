@@ -9,6 +9,8 @@ public class Task {
 
     protected Status status;
 
+    Type type;
+
     public Task(String name, String description, Status status) {
 
         this.name = name;
@@ -17,6 +19,7 @@ public class Task {
 
         this.status = status;
 
+        this.type = Type.TASK;
     }
 
     public int getId() {
@@ -33,6 +36,18 @@ public class Task {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     @Override
