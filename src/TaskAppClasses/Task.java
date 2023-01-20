@@ -9,7 +9,7 @@ public class Task {
 
     protected Status status;
 
-    Type type;
+    protected Type type;
 
     public Task(String name, String description, Status status) {
 
@@ -20,6 +20,8 @@ public class Task {
         this.status = status;
 
         this.type = Type.TASK;
+
+        this.id = 0;
     }
 
     public int getId() {

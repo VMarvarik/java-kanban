@@ -1,5 +1,6 @@
 package TaskAppManagers;
 import TaskAppClasses.*;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public interface TaskManager {
@@ -42,4 +43,6 @@ public interface TaskManager {
     void removeSubtaskByID(int id);
 
     void epicStatusCheck();
+
+    ArrayList<Task> getHistory();
 }

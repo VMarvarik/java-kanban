@@ -15,10 +15,6 @@ public class InMemoryTaskManager implements TaskManager {
         return inMemoryHistoryManager;
     }
 
-    public ArrayList<Task> getHistory() {
-        return inMemoryHistoryManager.getHistory();
-    }
-
     public HashMap<Integer, Task> getTaskHashMap() {
         return taskHashMap;
     }
@@ -303,5 +299,10 @@ public class InMemoryTaskManager implements TaskManager {
                 statusDone = 0;
             }
         }
+    }
+
+    @Override
+    public ArrayList<Task> getHistory() {
+        return inMemoryHistoryManager.getHistory();
     }
 }

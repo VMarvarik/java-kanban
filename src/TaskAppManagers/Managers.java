@@ -5,6 +5,10 @@ public final class Managers {
         return new InMemoryTaskManager();
     }
 
+    public static InMemoryTaskManager getFileBacked() {
+        return new FileBackedTasksManager("src/BackupDocument/Backup.csv");
+    }
+
     public static InMemoryHistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
     }

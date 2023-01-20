@@ -5,11 +5,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-//Вот это задача!
+
+//Здравствуйте, Семен! Я снова попалась на модификаторах, к сожалению, я забываю их откорректировать, пока пишу программу,
+// но исправлюсь! Изменила путь к файлу и переписала методы так, чтобы при загрузке из файла не выводились сообщения о создании и тд.
+// Добавила подробный вывод о исключении. Жду следующей проверки :)
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static void main(String[] args) {
-        final String PATH = "/home/faruynka/YandexPraktikum/java-kanban/src/BackupDocument/Backup.csv";
+        final String PATH = "src/BackupDocument/Backup.csv";
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(PATH);
         Task task1 = new Task("1", "1", Status.NEW);
         int id1 = fileBackedTasksManager.saveTask(task1);
@@ -81,7 +84,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             fileWriter.write("\n");
             fileWriter.write(historyToString(getInMemoryHistoryManager()));
         } catch (IOException exception) {
-            throw new ManagerSaveException("Во время записи файла произошла ошибка.");
+            throw new ManagerSaveException("Во время записи файла произошла ошибка.", exception);
         }
     }
 
@@ -117,7 +120,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             subtask.setId(Integer.parseInt(split[0]));
             return subtask;
         }
-        return new Task(split[2],split[4],Status.valueOf(split[3]));
+        Task task = new Task(split[2],split[4],Status.valueOf(split[3]));
+        task.setId(Integer.parseInt(split[0]));
+        return task;
     }
 
     public static ArrayList<Integer> historyFromString(String value) {
@@ -156,7 +161,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
             }
         } catch (IOException exception) {
-            throw new ManagerSaveException("Во время восстановления файла произошла ошибка.");
+            throw new ManagerSaveException("Во время восстановления файла произошла ошибка.", exception);
         }
         return fromFile;
     }
@@ -164,7 +169,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public void deleteAllTasks() {
         super.deleteAllTasks();
-        try (BufferedWriter bf = Files.newBufferedWriter(Path.of("/home/faruynka/YandexPraktikum/java-kanban/src/BackupDocument/Backup.csv"),
+        try (BufferedWriter bf = Files.newBufferedWriter(Path.of("/src/BackupDocument/Backup.csv"),
                 StandardOpenOption.TRUNCATE_EXISTING)) {
         } catch (IOException e) {
             e.printStackTrace();
@@ -173,16 +178,22 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     @Override
     public Task getTaskByID(int id) {
-        Task task = super.getTaskByID(id);
+        getInMemoryHistoryManager().add(getTaskHashMap().get(id));
+        Task task = getTaskHashMap().get(id);
         save();
         return task;
     }
 
     @Override
     public int saveTask(Task task) {
-        int id = super.saveTask(task);
+        if (task.getId() == 0) {
+            int id = super.saveTask(task);
+            save();
+            return id;
+        }
+        getTaskHashMap().put(task.getId(), task);
         save();
-        return id;
+        return task.getId();
     }
     @Override
     public void updateTask(Task newTask) {
@@ -199,20 +210,30 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public void deleteAllEpics() {
         super.deleteAllEpics();
+        save();
     }
 
     @Override
     public Task getEpicByID(int id) {
-        Task epic = super.getEpicByID(id);
-        save();
-        return epic;
+        if (getEpicHashMap().get(id) != null) {
+            Task epic = getEpicHashMap().get(id);
+            getInMemoryHistoryManager().add(getEpicHashMap().get(id));
+            save();
+            return epic;
+        }
+        return null;
     }
 
     @Override
     public int saveEpic(Epic epic) {
-        int id = super.saveEpic(epic);
+        if (epic.getId() == 0) {
+            int id = super.saveEpic(epic);
+            save();
+            return id;
+        }
+        getEpicHashMap().put(epic.getId(), epic);
         save();
-        return id;
+        return epic.getId();
     }
 
     @Override
@@ -234,16 +255,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     @Override
     public Task getSubtaskByID(int id) {
-        Task subtask = super.getSubtaskByID(id);
-        save();
-        return subtask;
+        if (getSubtaskHashMap().get(id) != null) {
+            Task subtask = getSubtaskHashMap().get(id);
+            getInMemoryHistoryManager().add(getSubtaskHashMap().get(id));
+            save();
+            return subtask;
+        }
+        return null;
     }
 
     @Override
     public int saveSubtask(Subtask subtask) {
-        int id = super.saveSubtask(subtask);
+        if (subtask.getId() == 0) {
+            int id = super.saveSubtask(subtask);
+            save();
+            return id;
+        }
+        getSubtaskHashMap().put(subtask.getId(), subtask);
+        getEpicHashMap().get(subtask.getEpicId()).fillSubtaskIList(subtask, getEpicHashMap().get(subtask.getEpicId()));
+        epicStatusCheck();
         save();
-        return id;
+        return subtask.getId();
     }
 
     @Override
