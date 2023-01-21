@@ -5,14 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-
-//Здравствуйте, Семен! Я снова попалась на модификаторах, к сожалению, я забываю их откорректировать, пока пишу программу,
-// но исправлюсь! Изменила путь к файлу и переписала методы так, чтобы при загрузке из файла не выводились сообщения о создании и тд.
-// Добавила подробный вывод о исключении. Жду следующей проверки :)
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static void main(String[] args) {
-        final String PATH = "src/BackupDocument/Backup.csv";
+        final String PATH = "Backup.csv";
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(PATH);
         Task task1 = new Task("1", "1", Status.NEW);
         int id1 = fileBackedTasksManager.saveTask(task1);
@@ -46,15 +42,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         FileBackedTasksManager newFileBackedTasksManager = loadFromFile(fileBackedTasksManager.getFile());
         System.out.println("Вызываем все таски, должны быть 101 102 103 ");
         System.out.println(newFileBackedTasksManager.getAllTasks());
-        newFileBackedTasksManager.getAllTasks();
         System.out.println("Вызываем все эпики, должен быть 201 с подзадачами 301 и 302");
         System.out.println(newFileBackedTasksManager.getAllEpics());
-        newFileBackedTasksManager.getAllEpics();
         System.out.println("Вызываем все сабтаски, должны быть 301 и 302");
         newFileBackedTasksManager.getAllSubtasks();
         System.out.println("Вызываем историю, она должна быть 101 102 103 201 301");
         System.out.println(newFileBackedTasksManager.getHistory());
-        newFileBackedTasksManager.getHistory();
     }
 
     private final File file;
@@ -169,7 +162,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public void deleteAllTasks() {
         super.deleteAllTasks();
-        try (BufferedWriter bf = Files.newBufferedWriter(Path.of("/src/BackupDocument/Backup.csv"),
+        try (BufferedWriter bf = Files.newBufferedWriter(Path.of("Backup.csv"),
                 StandardOpenOption.TRUNCATE_EXISTING)) {
         } catch (IOException e) {
             e.printStackTrace();

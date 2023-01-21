@@ -173,7 +173,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void getAllSubtasks() {
         if (!subtaskHashMap.isEmpty() && !epicHashMap.isEmpty()) {
             for (int key : epicHashMap.keySet()) {
-                System.out.println("TaskClasses.Epic ID: " + epicHashMap.get(key).getId());
+                System.out.println("Epic ID: " + epicHashMap.get(key).getId());
                 System.out.println(epicHashMap.get(key).getSubtaskList());
             }
         } else {
