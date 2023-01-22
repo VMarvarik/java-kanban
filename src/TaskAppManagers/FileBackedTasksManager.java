@@ -38,6 +38,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 "201,EPIC,7,NEW,7\n" +
                 "301,SUBTASK,8,NEW,8,201\n" +
                 "302,SUBTASK,9,NEW,9,201\n" +
+                "303,SUBTASK,10,NEW,10,201\n" +
                 "\n" +
                 "101,102,103,201,301,");
         System.out.println("Создаем новый файл менеджер на основе файла из предыдущего файл менеджера.");
@@ -130,9 +131,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static FileBackedTasksManager loadFromFile(File file) {
-        FileBackedTasksManager fromFile = new FileBackedTasksManager(file.getPath());
+        FileBackedTasksManager fromFile = new FileBackedTasksManager("src/NewBackUp.csv");
         try  {
-            String stringFile = Files.readString(Path.of(fromFile.getFile().getPath()));
+            String stringFile = Files.readString(Path.of(file.getPath()));
             String[] lines = stringFile.split(System.lineSeparator());
             for (int i = 1; i < lines.length; i++) {
                 if (!lines[i].isBlank() && i != lines.length - 1) {
