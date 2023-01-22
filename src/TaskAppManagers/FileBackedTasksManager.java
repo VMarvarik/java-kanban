@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static void main(String[] args) {
-        final String PATH = "Backup.csv";
+        final String PATH = "src/Backup.csv";
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(PATH);
         Task task1 = new Task("1", "1", Status.NEW);
         int id1 = fileBackedTasksManager.saveTask(task1);
@@ -22,6 +22,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         int id8 = fileBackedTasksManager.saveSubtask(subtask1);
         Subtask subtask2 = new Subtask("9", "9", Status.NEW, id7);
         int id9 = fileBackedTasksManager.saveSubtask(subtask2);
+        Subtask subtask3 = new Subtask("10", "10", Status.NEW, id7);
+        int id10 = fileBackedTasksManager.saveSubtask(subtask3);
         System.out.println("Вызываем таски 101, 102, 103, эпик 201, подзадачу 301.");
         fileBackedTasksManager.getTaskByID(id1);
         fileBackedTasksManager.getTaskByID(id2);
@@ -42,9 +44,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         FileBackedTasksManager newFileBackedTasksManager = loadFromFile(fileBackedTasksManager.getFile());
         System.out.println("Вызываем все таски, должны быть 101 102 103 ");
         System.out.println(newFileBackedTasksManager.getAllTasks());
-        System.out.println("Вызываем все эпики, должен быть 201 с подзадачами 301 и 302");
+        System.out.println("Вызываем все эпики, должен быть 201 с подзадачами 301 302 303");
         System.out.println(newFileBackedTasksManager.getAllEpics());
-        System.out.println("Вызываем все сабтаски, должны быть 301 и 302");
+        System.out.println("Вызываем все сабтаски, должны быть 301 302 303");
         newFileBackedTasksManager.getAllSubtasks();
         System.out.println("Вызываем историю, она должна быть 101 102 103 201 301");
         System.out.println(newFileBackedTasksManager.getHistory());
@@ -162,7 +164,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public void deleteAllTasks() {
         super.deleteAllTasks();
-        try (BufferedWriter bf = Files.newBufferedWriter(Path.of("Backup.csv"),
+        try (BufferedWriter bf = Files.newBufferedWriter(Path.of("src/Backup.csv"),
                 StandardOpenOption.TRUNCATE_EXISTING)) {
         } catch (IOException e) {
             e.printStackTrace();
