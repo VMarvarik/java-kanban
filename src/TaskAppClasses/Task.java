@@ -1,6 +1,10 @@
 package TaskAppClasses;
 
-public class Task {
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class Task implements Comparable<Task> {
+
     private int id;
 
     protected String name;
@@ -11,7 +15,15 @@ public class Task {
 
     protected Type type;
 
-    public Task(String name, String description, Status status) {
+    protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+    protected long duration;
+
+    protected LocalDateTime startTime;
+
+    protected LocalDateTime endTime;
+
+    public Task(String name, String description, Status status, long duration, String startTime) {
 
         this.name = name;
 
@@ -22,6 +34,14 @@ public class Task {
         this.type = Type.TASK;
 
         this.id = 0;
+
+        this.duration = duration;
+
+        if (startTime.isBlank() || startTime.isEmpty()) {
+            this.startTime = null;
+        } else {
+            this.startTime = LocalDateTime.parse(startTime, formatter);
+        }
     }
 
     public int getId() {
@@ -52,11 +72,42 @@ public class Task {
         return description;
     }
 
+    public long getDuration() {
+        return duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime != null) {
+            endTime = startTime.plusMinutes(duration);
+            return endTime;
+        }
+        return null;
+    }
+
     @Override
-
     public String toString() {
+        String toString = "TaskId:" + id + ", название:<" + name + ">, описание:<" + description + ">, статус:<" + status
+                + ">, длительность:<" + duration + ">, дата и время старта:<";
+        if (startTime == null) {
+            return toString + "отсутствует>.";
+        }
+        return toString + startTime.format(formatter) + ">.";
+    }
 
-        return "TaskId:" + id + ", название:<" + name + ">, описание:<" + description + ">, статус:<" + status + ">.";
-
+    public int compareTo(Task task){
+        if (this.startTime == null) {
+            return 1;
+        } else if (task.getStartTime() == null) {
+            return -1;
+        } else if (this.startTime == null && task.getStartTime() == null) {
+            return 1;
+        } else if (this.startTime.isAfter(task.getStartTime())) {
+            return 1;
+        }
+        return -1;
     }
 }

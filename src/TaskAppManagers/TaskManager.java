@@ -1,48 +1,51 @@
 package TaskAppManagers;
 import TaskAppClasses.*;
+
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 public interface TaskManager {
-    Collection<Task> getAllTasks();
+    List<Task> getAllTasks();
 
-    void deleteAllTasks();
+    String deleteAllTasks();
 
     Task getTaskByID(int id);
 
     int saveTask(Task task);
 
-    void updateTask(Task newTask);
+    Task updateTask(Task newTask);
 
-    void removeTaskByID(int id);
+    String removeTaskByID(int id);
 
-    Collection<Epic> getAllEpics();
+    List<Epic> getAllEpics();
 
-    void deleteAllEpics();
+    String deleteAllEpics();
 
-    Task getEpicByID(int id);
+    Epic getEpicByID(int id);
 
     int saveEpic(Epic epic);
 
-    void updateEpic(Epic newEpic);
+    Epic updateEpic(Epic newEpic);
 
-    void removeEpicByID(int id);
+    String removeEpicByID(int id);
 
     String getEpicSubtasks(int epicId);
 
-    void getAllSubtasks();
+    List<Subtask> getAllSubtasks();
 
-    void deleteAllSubtasks();
+    String deleteAllSubtasks();
 
-    Task getSubtaskByID(int id);
+    Subtask getSubtaskByID(int id);
 
     int saveSubtask(Subtask subtask);
 
-    void updateSubtask(Subtask newSubtask);
+    Subtask updateSubtask(Subtask newSubtask);
 
-    void removeSubtaskByID(int id);
+    String removeSubtaskByID(int id);
 
     void epicStatusCheck();
 
     ArrayList<Task> getHistory();
+
+    ArrayList<Task> getPrioritizedTasks();
 }

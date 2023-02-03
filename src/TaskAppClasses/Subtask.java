@@ -3,8 +3,8 @@ package TaskAppClasses;
 public class Subtask extends Task {
     private final int epicId;
 
-    public Subtask(String name, String description, Status status, int epicId) {
-        super(name, description, status);
+    public Subtask(String name, String description, Status status, int epicId, long duration, String startTime) {
+        super(name, description, status, duration, startTime);
         this.epicId = epicId;
         super.type = Type.SUBTASK;
     }
@@ -15,8 +15,13 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "SubtaskId:" + super.getId() + ", название:<" + name + ">, описание:<"
-                + description + ">, статус:<" + status + ">.";
+        String toString = "SubtaskId:" + super.getId() + ", название:<" + name + ">, описание:<"
+                + description + ">, статус:<" + status +
+                ">, длительность:<" + duration + ">, дата и время старта:<";
+        if (startTime == null) {
+            return toString + "отсутствует>.";
+        }
+        return toString + startTime.format(formatter) + ">.";
     }
 
     @Override

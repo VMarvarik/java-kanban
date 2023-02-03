@@ -1,10 +1,5 @@
-id,type,name,status,description,epic
-101,TASK,1,NEW,1
-102,TASK,2,NEW,2
-103,TASK,3,NEW,3
-201,EPIC,7,NEW,7
-301,SUBTASK,8,NEW,8,201
-302,SUBTASK,9,NEW,9,201
-303,SUBTASK,10,NEW,10,201
+id,type,name,status,description,duration minutes,start time,epic
+101,TASK,01,NEW,01,15,2016-11-09 10:30
+201,EPIC,01,NEW,01,15,2015-11-09 10:30
 
-101,102,103,201,301,
+201,101,

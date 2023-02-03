@@ -1,12 +1,14 @@
 package TaskAppClasses;
 
 public class ManagerSaveException extends RuntimeException {
-
     public ManagerSaveException() {
     }
 
-    public ManagerSaveException(String message, Exception exception) {
+    public ManagerSaveException(String message) {
         super(message);
-        exception.printStackTrace();
+    }
+
+    public ManagerSaveException(String message, Throwable exception) {
+        super(message, exception);
     }
 }
