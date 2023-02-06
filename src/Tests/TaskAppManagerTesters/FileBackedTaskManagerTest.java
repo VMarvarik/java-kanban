@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 //Здравствуй, Семен! Дописала тест на время здесь, а также добавила в начало тест на getPrioritizedTasks в InMemoryTaskManagerTest
-//Заменила lineSeparator на "\n", поэтому теперь все должно рабоать корректно 
+//Дописала проверку на время в epicTest
+//Заменила lineSeparator на "\n", поэтому теперь все должно рабоать корректно
 public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
 
     FileBackedTasksManager manager = Managers.getFileBacked("src/Backup.csv");
