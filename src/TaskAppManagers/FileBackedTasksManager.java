@@ -3,22 +3,9 @@ import TaskAppClasses.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 public class FileBackedTasksManager extends InMemoryTaskManager {
-
-    public static void main(String[] args) {
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager("src/Backup.csv");
-        Epic epic = new Epic ("01", "01", Status.NEW, 15, "2016-11-09 10:30");
-        fileBackedTasksManager.saveEpic(epic);
-        fileBackedTasksManager.saveTask(new Task ("01", "01", Status.NEW, 15, "2016-11-09 10:30"));
-        FileBackedTasksManager newManager = loadFromFile(fileBackedTasksManager.getFile());
-        System.out.println(newManager.getAllEpics());
-        System.out.println(newManager.getAllTasks());
-        System.out.println(newManager.getHistory());
-    }
-
     private final File file;
 
     public FileBackedTasksManager(String filepath) {
@@ -102,7 +89,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         FileBackedTasksManager fromFile = new FileBackedTasksManager(file.getPath());
         try {
             String stringFile = Files.readString(Path.of(file.getPath()));
-            String[] lines = stringFile.split(System.lineSeparator());
+            String[] lines = stringFile.split("\n");
             for (int i = 1; i < lines.length; i++) {
                 if (!lines[i].isBlank() && i != lines.length - 1) {
                     switch (fromString(lines[i]).getType()) {
@@ -147,10 +134,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public int saveTask(Task task) {
         if (task.getId() == 0) {
-            int id = super.saveTask(task);
-            save();
-            return id;
+            if (super.timeValidation(task)) {
+                int id = super.saveTask(task);
+                save();
+                return id;
+            }
+            return 0;
         }
+        getTaskHashMap().put(task.getId(), task);
         super.saveTask(task);
         save();
         return task.getId();
@@ -190,9 +181,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public int saveEpic(Epic epic) {
         if (epic.getId() == 0) {
-            int id = super.saveEpic(epic);
-            save();
-            return id;
+            if (super.timeValidation(epic)) {
+                int id = super.saveEpic(epic);
+                save();
+                return id;
+            }
+            return 0;
         }
         getEpicHashMap().put(epic.getId(), epic);
         save();
@@ -234,9 +228,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public int saveSubtask(Subtask subtask) {
         if (subtask.getId() == 0) {
-            int id = super.saveSubtask(subtask);
-            save();
-            return id;
+            if (super.timeValidation(subtask)) {
+                int id = super.saveSubtask(subtask);
+                save();
+                return id;
+            }
+            return 0;
         }
         getSubtaskHashMap().put(subtask.getId(), subtask);
         getEpicHashMap().get(subtask.getEpicId()).fillSubtaskList(subtask);

@@ -1,7 +1,8 @@
-package TaskAppManagersTesters;
+package Tests.TaskAppManagerTesters;
 
 import TaskAppClasses.*;
 import TaskAppManagers.InMemoryTaskManager;
+import TaskAppManagers.Managers;
 import org.junit.jupiter.api.BeforeEach;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +11,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class InMemoryTaskManagerTest extends TaskManagerTest <InMemoryTaskManager> {
+public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
-    InMemoryTaskManager manager = new InMemoryTaskManager();
+    InMemoryTaskManager manager = Managers.getDefault();
 
     public Task create(Type type) {
         if (type.equals(Type.TASK)) {
@@ -25,7 +26,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest <InMemoryTaskManage
 
     @BeforeEach
     public void beforeEach() {
-        this.manager = new InMemoryTaskManager();
+        this.manager = Managers.getDefault();
     }
 
     @Override
@@ -43,6 +44,27 @@ public class InMemoryTaskManagerTest extends TaskManagerTest <InMemoryTaskManage
         //Добавляем эпик с пересекающим временем
         Epic epic5 = new Epic("#5", "#5", Status.NEW, 15,"2002-11-09 10:40");
         assertEquals(0, manager.saveEpic(epic5));
+    }
+
+    @Override
+    public void getPrioritizedTasks() {
+        Task task1 = new Task("#1", "#1", Status.NEW, 15,"2001-11-09 10:30");
+        manager.saveTask(task1);
+        Task task2 = new Task("#2", "#2", Status.NEW, 15,"2000-11-09 10:30");
+        manager.saveTask(task2);
+        Task task3 = new Task("#3", "#3", Status.NEW, 15," ");
+        manager.saveTask(task3);
+        Epic epic4 = new Epic("#4", "#4", Status.NEW, 15,"2002-11-09 10:30");
+        manager.saveEpic(epic4);
+        Task[] prioritizedTasks = new Task[5];
+        prioritizedTasks[0] = task2;
+        prioritizedTasks[1] = task1;
+        prioritizedTasks[2] = epic4;
+        prioritizedTasks[3] = task3;
+        Epic epic5 = new Epic("#5", "#5", Status.NEW, 15,null);
+        manager.saveEpic(epic5);
+        prioritizedTasks[4] = epic5;
+        assertArrayEquals(prioritizedTasks, manager.getPrioritizedTasks().toArray());
     }
 
     @Override
@@ -305,23 +327,5 @@ public class InMemoryTaskManagerTest extends TaskManagerTest <InMemoryTaskManage
     @Override
     public void removeSubtaskByInvalidId() {
         assertEquals("Нельзя удалить подзадачу №" + 0 + ", так как ее нет.", manager.removeSubtaskByID(0));
-    }
-
-    @Override
-    public void getPrioritizedTasks() {
-        Task task1 = new Task("#1", "#1", Status.NEW, 15,"2001-11-09 10:30");
-        manager.saveTask(task1);
-        Task task2 = new Task("#2", "#2", Status.NEW, 15,"2000-11-09 10:30");
-        manager.saveTask(task2);
-        Task task3 = new Task("#3", "#3", Status.NEW, 15," ");
-        manager.saveTask(task3);
-        Epic epic4 = new Epic("#4", "#4", Status.NEW, 15,"2002-11-09 10:30");
-        manager.saveEpic(epic4);
-        Task[] prioritizedTasks = new Task[4];
-        prioritizedTasks[0] = task2;
-        prioritizedTasks[1] = task1;
-        prioritizedTasks[2] = epic4;
-        prioritizedTasks[3] = task3;
-        assertArrayEquals(prioritizedTasks, manager.getPrioritizedTasks().toArray());
     }
 }

@@ -46,7 +46,6 @@ public class CustomLinkedList {
 
     public void removeNode(Node node) {
         if (node == null) {
-            System.out.println("Данная задача отсутствует в списке просмотров.");
             return;
         }
         final Node next = node.getLinkNext();

@@ -1,20 +1,48 @@
-package TaskAppManagersTesters;
+package Tests.TaskAppManagerTesters;
 
 import TaskAppClasses.*;
 import TaskAppManagers.FileBackedTasksManager;
+import TaskAppManagers.Managers;
 import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import static org.junit.Assert.*;
 
+//Здравствуй, Семен! Дописала тест на время здесь, а также добавила в начало тест на getPrioritizedTasks в InMemoryTaskManagerTest
+//Заменила lineSeparator на "\n", поэтому теперь все должно рабоать корректно 
 public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
 
-    FileBackedTasksManager manager = new FileBackedTasksManager("src/Backup.csv");
+    FileBackedTasksManager manager = Managers.getFileBacked("src/Backup.csv");
 
     @Override
     public void beforeEach() {
-        this.manager = new FileBackedTasksManager("src/Backup.csv");
+        this.manager = Managers.getFileBacked("src/Backup.csv");
+    }
+
+    @Test
+    public void saveTasksIfTheirTimeIntersects() {
+        Task taskCorrectTime = new Task ("01", "01", Status.NEW, 15, "2016-11-09 10:30");
+        manager.saveTask(taskCorrectTime);
+        //Создаем и пробуем сохранить задачу, эпик с таким же временем.
+        Task taskWrongTime = new Task ("01", "01", Status.NEW, 15, "2016-11-09 10:30");
+        assertEquals(0, manager.saveTask(taskWrongTime));
+        Epic epicWrongTime = new Epic ("01", "01", Status.NEW, 15, "2016-11-09 10:30");
+        assertEquals(0, manager.saveEpic(epicWrongTime));
+        //Создаем правильный эпик и пытаемся добавить подзадачу с пересекающимся временем
+        Epic epicCorrectTime = new Epic ("01", "01", Status.NEW, 15, "2016-10-09 10:30");
+        int epicId = manager.saveEpic(epicCorrectTime);
+        Subtask subtaskWrongTime = new Subtask ("01", "01", Status.NEW, epicId, 30, "2016-11-09 10:30");
+        assertEquals(0, manager.saveSubtask(subtaskWrongTime));
+        //Проверяем, что при вызове всех задач, эпиков и подзадач не выводятся некорректные
+        ArrayList<Task> allTasks = new ArrayList<>();
+        allTasks.add(taskCorrectTime);
+        ArrayList<Task> allEpics = new ArrayList<>();
+        allEpics.add(epicCorrectTime);
+        assertEquals(allTasks, manager.getAllTasks());
+        assertEquals(allEpics, manager.getAllEpics());
+        assertNull(manager.getAllSubtasks());
     }
 
     @Test

@@ -1,4 +1,4 @@
-package TaskAppManagersTesters;
+package Tests.TaskAppManagerTesters;
 
 import TaskAppManagers.TaskManager;
 import org.junit.Test;

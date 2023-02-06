@@ -27,12 +27,16 @@ public class Epic extends Task {
         for (Subtask subtask : this.subtaskList) {
             LocalDateTime subtaskStartTime = subtask.getStartTime();
             LocalDateTime subtaskEndTime = subtask.getEndTime();
-            this.duration += subtask.getDuration();
-            if (subtaskStartTime.isBefore(this.startTime)) {
+            int duration = 0;
+            duration += subtask.getDuration();
+            this.duration = duration;
+            if (subtaskStartTime != null && subtaskStartTime.isBefore(this.startTime)) {
                 this.startTime = subtaskStartTime;
             }
-            if (subtaskEndTime.isBefore(this.startTime)) {
+            if (subtaskEndTime != null && subtaskEndTime.isAfter(this.endTime)) {
                 this.endTime = subtaskEndTime;
+            } else if (subtaskEndTime != null) {
+                this.endTime = super.getEndTime();
             }
         }
     }

@@ -1,4 +1,4 @@
-package TaskAppManagersTesters;
+package Tests.TaskAppManagerTesters;
 
 import TaskAppClasses.*;
 import TaskAppManagers.InMemoryHistoryManager;

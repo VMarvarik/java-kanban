@@ -37,7 +37,7 @@ public class Task implements Comparable<Task> {
 
         this.duration = duration;
 
-        if (startTime.isBlank() || startTime.isEmpty()) {
+        if (startTime == null ||startTime.isBlank() || startTime.isEmpty()) {
             this.startTime = null;
         } else {
             this.startTime = LocalDateTime.parse(startTime, formatter);
