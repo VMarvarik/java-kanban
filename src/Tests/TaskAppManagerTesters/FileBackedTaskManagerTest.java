@@ -4,20 +4,18 @@ import TaskAppClasses.*;
 import TaskAppManagers.FileBackedTasksManager;
 import TaskAppManagers.Managers;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import static org.junit.Assert.*;
 
-//Здравствуй, Семен! Дописала тест на время здесь, а также добавила в начало тест на getPrioritizedTasks в InMemoryTaskManagerTest
-//Дописала проверку на время в epicTest
-//Заменила lineSeparator на "\n", поэтому теперь все должно рабоать корректно
 public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
 
     FileBackedTasksManager manager = Managers.getFileBacked("src/Backup.csv");
 
-    @Override
+    @BeforeEach
     public void beforeEach() {
         this.manager = Managers.getFileBacked("src/Backup.csv");
     }
@@ -53,7 +51,7 @@ public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
         manager.save();
         try {
             String stringFile = Files.readString(Path.of(manager.getFile().getPath()));
-            String[] lines = stringFile.split(System.lineSeparator());
+            String[] lines = stringFile.split("\n");
             assertEquals(3, lines.length); //размер 3, потому что в файле две пустые строки
             assertEquals(" ", lines[lines.length - 1]); // проверяем пустую строку истории
             assertEquals("id,type,name,status,description,duration minutes,start time,epic", lines[0]);
@@ -71,7 +69,7 @@ public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
         int epicId = manager.saveEpic((Epic) create(Type.EPIC));
         try {
             String stringFile = Files.readString(Path.of(manager.getFile().getPath()));
-            String[] lines = stringFile.split(System.lineSeparator());
+            String[] lines = stringFile.split("\n");
             assertEquals(4, lines.length);
             assertEquals(" ", lines[lines.length - 1]); // проверяем пустую строку истории
             assertEquals("201,EPIC,01,NEW,01,15,2015-11-09 10:30", lines[1]);
@@ -89,7 +87,7 @@ public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
         int taskId = manager.saveTask(create(Type.TASK));
         try {
             String stringFile = Files.readString(Path.of(manager.getFile().getPath()));
-            String[] lines = stringFile.split(System.lineSeparator());
+            String[] lines = stringFile.split("\n");
             assertEquals(5, lines.length);
             assertEquals("101,TASK,01,NEW,01,15,2016-11-09 10:30", lines[1]);
             assertEquals("201,EPIC,01,NEW,01,15,2015-11-09 10:30", lines[2]);

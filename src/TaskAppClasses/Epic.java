@@ -75,9 +75,9 @@ public class Epic extends Task {
                 + ">, длительность:<" + duration + ">, дата и время старта:<";
 
         if (startTime == null) {
-            result += "отсутствует>." + ">, подзадачи:" + "\n";
+            result += "отсутствует>." + ">, подзадачи:";
         } else {
-            result += startTime.format(formatter) + ">, подзадачи:" + "\n";
+            result += startTime.format(formatter) + ">, подзадачи:";
         }
 
         if (subtaskList.isEmpty()) {

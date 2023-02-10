@@ -1,6 +1,5 @@
 package TaskAppManagers;
 import TaskAppClasses.*;
-
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -13,6 +12,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Epic> epicHashMap = new HashMap<>();
     private final HashMap<Integer, Subtask> subtaskHashMap = new HashMap<>();
     private final InMemoryHistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
+    private TreeSet<Task> prioritizedTree = new TreeSet<>();
     public InMemoryHistoryManager getInMemoryHistoryManager() {
         return inMemoryHistoryManager;
     }
@@ -62,18 +62,28 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int saveTask(Task task) {
-        if (!taskHashMap.isEmpty() && !timeValidation(task)) {
-            return 0;
+        try {
+            task.setId(++taskId);
+            timeValidation(task);
+            taskHashMap.put(task.getId(), task);
+            System.out.println("Задача №" + taskId + " сохранена.");
+        } catch (TaskValidationException exception) {
+            --taskId;
+            task.setId(0);
         }
-        task.setId(++taskId);
-        taskHashMap.put(task.getId(), task);
-        System.out.println("Задача №" + taskId + " сохранена.");
-        return taskId;
+        return task.getId();
     }
 
     @Override
     public Task updateTask(Task newTask) {
         if (taskHashMap.containsKey(newTask.getId())) {
+            Task oldTask = taskHashMap.get(newTask.getId());
+            try {
+                removeFromPrioritizedTree(oldTask);
+                timeValidation(newTask);
+            } catch (TaskValidationException exception) {
+                prioritizedTree.add(oldTask);
+            }
             taskHashMap.put(newTask.getId(), newTask);
             System.out.println("Задача №" + newTask.getId() + " обновлена.");
             System.out.println("Новый список задач - " + getAllTasks());
@@ -89,6 +99,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (taskHashMap.get(id) != null){
             taskHashMap.remove(id);
             inMemoryHistoryManager.remove(id);
+            renewPrioritizedTree();
             return "Задача №" + id + " удалена.";
         }
         return "Нельзя удалить задачу №" + id + ", так как ее нет.";
@@ -109,6 +120,7 @@ public class InMemoryTaskManager implements TaskManager {
             return "Список эпиков пуст, нечего удалять.";
         } else {
             epicHashMap.clear();
+            renewPrioritizedTree();
         }
         return "Все эпики удалены.";
     }
@@ -127,19 +139,28 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int saveEpic(Epic epic) {
-        if (!epicHashMap.isEmpty() && !timeValidation(epic)) {
-            return 0;
+        try {
+            epic.setId(++epicId);
+            timeValidation(epic);
+            epicHashMap.put(epic.getId(), epic);
+            System.out.println("Эпик №" + epicId + " сохранен.");
+        } catch (TaskValidationException exception) {
+            --epicId;
+            epic.setId(0);
         }
-        epic.setId(++epicId);
-        epicHashMap.put(epic.getId(), epic);
-
-        System.out.println("Эпик №" + epicId + " сохранен.");
-        return epicId;
+        return epic.getId();
     }
 
     @Override
     public Epic updateEpic(Epic newEpic) {
         if (epicHashMap.containsKey(newEpic.getId())) {
+            Epic oldEpic = epicHashMap.get(newEpic.getId());
+            try {
+                removeFromPrioritizedTree(oldEpic);
+                timeValidation(newEpic);
+            } catch (TaskValidationException exception) {
+                prioritizedTree.add(oldEpic);
+            }
             ArrayList<Subtask> newEpicSubtaskList = epicHashMap.get(newEpic.getId()).getSubtaskList();
             newEpic.getSubtaskList().addAll(newEpicSubtaskList);
             epicHashMap.put(newEpic.getId(), newEpic);
@@ -160,6 +181,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
             inMemoryHistoryManager.remove(epicId);
             epicHashMap.remove(epicId);
+            renewPrioritizedTree();
             return "Эпик №" + epicId + " удален.";
 
         }
@@ -194,6 +216,7 @@ public class InMemoryTaskManager implements TaskManager {
                 epicHashMap.get(epicID).timeCheck();
             }
             subtaskHashMap.clear();
+            renewPrioritizedTree();
             return "Все подзадачи удалены.";
         }
         return "Список подзадач пуст, нечего удалять.";
@@ -214,24 +237,34 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public int saveSubtask(Subtask subtask) {
         if (!epicHashMap.containsKey(subtask.getEpicId())) {
-            System.out.println("Указанного epicId у подзадачи не существует.");
+            System.out.println("Указанного у подзадачи epicId не существует.");
         } else {
-            if (!subtaskHashMap.isEmpty() && !timeValidation(subtask)) {
-                return 0;
+            try {
+                subtask.setId(++subtaskId);
+                timeValidation(subtask);
+                subtaskHashMap.put(subtask.getId(), subtask);
+                epicHashMap.get(subtask.getEpicId()).fillSubtaskList(subtask);
+                epicStatusCheck();
+                System.out.println("Подзадача №" + subtaskId + " сохранена.");
+            } catch (TaskValidationException exception) {
+                --subtaskId;
+                subtask.setId(0);
             }
-            subtask.setId(++subtaskId);
-            subtaskHashMap.put(subtask.getId(), subtask);
-            epicHashMap.get(subtask.getEpicId()).fillSubtaskList(subtask);
-            epicStatusCheck();
-            System.out.println("Подзадача №" + subtaskId + " сохранена.");
-            return subtaskId;
         }
-        return 0;
+        return subtask.getId();
     }
 
     @Override
     public Subtask updateSubtask(Subtask newSubtask) {
         if (subtaskHashMap.containsKey(newSubtask.getId())) {
+            Subtask oldSubtask = subtaskHashMap.get(newSubtask.getId());
+            try {
+                removeFromPrioritizedTree(oldSubtask);
+                epicHashMap.get(newSubtask.getEpicId()).timeCheck();
+                timeValidation(newSubtask);
+            } catch (TaskValidationException exception) {
+                prioritizedTree.add(oldSubtask);
+            }
             subtaskHashMap.put(newSubtask.getId(), newSubtask);
             if (epicHashMap.containsKey(newSubtask.getEpicId())) {
                 for (int i = 0; i < epicHashMap.get(newSubtask.getEpicId()).getSubtaskList().size(); i++) {
@@ -267,6 +300,7 @@ public class InMemoryTaskManager implements TaskManager {
                 }
             }
             subtaskHashMap.remove(id);
+            renewPrioritizedTree();
             return "Подзадача №" + id + " удалена.";
         }
         return "Нельзя удалить подзадачу №" + id + ", так как ее нет.";
@@ -309,15 +343,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public ArrayList<Task> getPrioritizedTasks() {
-        TreeSet<Task> prioritizedTree = new TreeSet<>();
-        if (!taskHashMap.isEmpty()) {
-            prioritizedTree.addAll(taskHashMap.values());
-        }
-        if (!epicHashMap.isEmpty()){
-            prioritizedTree.addAll(epicHashMap.values());
-        }
-        if (!subtaskHashMap.isEmpty()) {
-            prioritizedTree.addAll(subtaskHashMap.values());
+        if (prioritizedTree.isEmpty()) {
+            return null;
         }
         return new ArrayList<>(prioritizedTree);
     }
@@ -327,25 +354,43 @@ public class InMemoryTaskManager implements TaskManager {
         return inMemoryHistoryManager.getHistory();
     }
 
-    public boolean timeValidation(Task task) {
-        if (task.getStartTime() != null) {
-            boolean isValid = false;
-            for (int i = 0; i < getPrioritizedTasks().size(); i++) {
-                LocalDateTime startTime = getPrioritizedTasks().get(i).getStartTime();
-                LocalDateTime endTime = getPrioritizedTasks().get(i).getEndTime();
-                if (getPrioritizedTasks().get(i).getStartTime().getYear() == task.getStartTime().getYear()
-                        && getPrioritizedTasks().get(i).getStartTime().getDayOfYear() == task.getStartTime().getDayOfYear()) {
-                    if (endTime.isBefore(task.getStartTime())) {
-                        isValid = true;
+    public void timeValidation(Task task) {
+        if (task.getStartTime() == null) {
+            prioritizedTree.add(task);
+        } else {
+            final LocalDateTime startTime;
+            final LocalDateTime endTime;
+            startTime = task.getStartTime();
+            endTime = task.getEndTime();
+            for (Task t : prioritizedTree) {
+                final LocalDateTime existStart = t.getStartTime();
+                final LocalDateTime existEnd = t.getEndTime();
+                if (existStart != null) {
+                    if (endTime.isBefore(existStart)) {
+                        continue;
                     }
-                    if (task.getEndTime().isBefore(startTime)) {
-                        isValid = true;
+                    if (existEnd.isBefore(startTime)) {
+                        continue;
                     }
-                    return isValid;
+                    throw new TaskValidationException("Задача пересекается с id=" + t.getId() + " c " + existStart + " по " + existEnd);
                 }
             }
-            return true;
+            prioritizedTree.add(task);
         }
-        return true;
+    }
+
+    public void removeFromPrioritizedTree(Task task) {
+        ArrayList<Task> treeSet = new ArrayList<>(prioritizedTree);
+        treeSet.remove(task);
+        prioritizedTree = new TreeSet<>(treeSet);
+    }
+
+    public void renewPrioritizedTree() {
+        TreeSet<Task> newPrioritizedTree = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+        newPrioritizedTree.addAll(taskHashMap.values());
+        newPrioritizedTree.addAll(epicHashMap.values());
+        newPrioritizedTree.addAll(subtaskHashMap.values());
+        prioritizedTree.clear();
+        prioritizedTree = newPrioritizedTree;
     }
 }

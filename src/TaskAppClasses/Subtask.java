@@ -26,6 +26,7 @@ public class Subtask extends Task {
 
     @Override
     public String getDescription() {
-        return super.getDescription() + "," + getEpicId();
+        return super.getDescription();
     }
+
 }

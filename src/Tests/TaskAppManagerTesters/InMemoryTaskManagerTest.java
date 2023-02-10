@@ -3,6 +3,7 @@ package Tests.TaskAppManagerTesters;
 import TaskAppClasses.*;
 import TaskAppManagers.InMemoryTaskManager;
 import TaskAppManagers.Managers;
+import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         this.manager = Managers.getDefault();
     }
 
-    @Override
+    @Test
     public void addAnyTaskWithIntersectedTime() {
         Task task1 = new Task("#1", "#1", Status.NEW, 15,"2001-11-09 10:30");
         manager.saveTask(task1);
@@ -46,7 +47,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         assertEquals(0, manager.saveEpic(epic5));
     }
 
-    @Override
+    @Test
     public void getPrioritizedTasks() {
         Task task1 = new Task("#1", "#1", Status.NEW, 15,"2001-11-09 10:30");
         manager.saveTask(task1);
@@ -67,7 +68,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         assertArrayEquals(prioritizedTasks, manager.getPrioritizedTasks().toArray());
     }
 
-    @Override
+    @Test
     public void addNewTask() {
         Task task = create(Type.TASK);
         int taskId = manager.saveTask(task);
@@ -78,7 +79,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         assertEquals(task, tasks.get(0), "Задачи не совпадают.");
     }
 
-    @Override
+    @Test
     public void addNewEpic() {
         Epic epic = (Epic) create(Type.EPIC);
         int epicId = manager.saveEpic(epic);
@@ -94,7 +95,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         assertEquals(Status.IN_PROGRESS, savedEpic.getStatus(), "Статусы не сопадают");
     }
 
-    @Override
+    @Test
     public void addNewSubtask() {
         Epic epic = (Epic) create(Type.EPIC);
         int epicId = manager.saveEpic(epic);
@@ -111,17 +112,16 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         assertTrue(epic.getSubtaskList().contains(savedSubtask));
     }
 
-    @Override
+    @Test
     public void updateTask() {
-        Task task = create(Type.TASK);
-        int taskId = manager.saveTask(task);
-        Task newTask = new Task("0", "0", Status.NEW, 15, "2016-11-09 10:30");
+        int taskId = manager.saveTask(create(Type.TASK));
+        Task newTask = new Task("1", "1", Status.NEW, 15, "2016-11-09 10:30");
         newTask.setId(taskId);
         manager.updateTask(newTask);
         assertEquals(newTask, manager.getTaskByID(taskId), "Задачи не совпадают после обновления");
     }
 
-    @Override
+    @Test
     public void updateEpic() {
         Epic epic = (Epic) create(Type.EPIC);
         int epicId = manager.saveEpic(epic);
@@ -132,20 +132,20 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         assertEquals(newEpic, manager.getEpicByID(epicId), "Эпики не совпадают после обновления");
     }
 
-    @Override
+    @Test
     public void updateSubtask() {
         Epic epic = (Epic) create(Type.EPIC);
         int epicId = manager.saveEpic(epic);
-        Subtask subtask = new Subtask("1", "1", Status.NEW, epicId, 15, "2016-11-09 10:30");
+        Subtask subtask = new Subtask("1", "1", Status.NEW, epicId, 15, "2017-11-09 10:30");
         int subtaskId = manager.saveSubtask(subtask);
-        Subtask newSubtask = new Subtask("2", "2", Status.NEW, epicId, 15, "2016-11-09 10:30");
+        Subtask newSubtask = new Subtask("2", "2", Status.NEW, epicId, 15, "2017-11-09 10:30");
         newSubtask.setId(subtaskId);
         manager.updateSubtask(newSubtask);
         assertEquals(newSubtask, manager.getSubtaskByID(subtaskId), "Подзадачи не совпадают после обновления");
         assertTrue(epic.getSubtaskList().contains(newSubtask));
     }
 
-    @Override
+    @Test
     public void removeTaskById() {
         Task task = create(Type.TASK);
         int taskId = manager.saveTask(task);
@@ -153,7 +153,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         assertNull(manager.getTaskByID(taskId), "Задача не была удалена");
     }
 
-    @Override
+    @Test
     public void removeEpicById() {
         Epic epic = (Epic) create(Type.EPIC);
         int epicId = manager.saveEpic(epic);
@@ -161,7 +161,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         assertNull(manager.getEpicByID(epicId), "Эпик не был удален");
     }
 
-    @Override
+    @Test
     public void removeSubtaskById() {
         Epic epic = (Epic) create(Type.EPIC);
         int epicId = manager.saveEpic(epic);
@@ -173,7 +173,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         assertTrue(epic.getSubtaskList().isEmpty());
     }
 
-    @Override
+    @Test
     public void removeAllTasks() {
         Task task1 = create(Type.TASK);
         Task task2 = new Task("2", "2", Status.NEW, 15, "2016-11-09 10:30");
@@ -183,7 +183,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         assertNull(manager.getAllTasks());
     }
 
-    @Override
+    @Test
     public void removeAllEpics() {
         Epic epic1 = (Epic) create(Type.EPIC);
         Epic epic2 = new Epic("1", "1", Status.NEW, 15, "2016-11-09 10:30");
@@ -192,7 +192,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         manager.deleteAllEpics();
         assertNull(manager.getAllEpics());
     }
-    @Override
+    @Test
     public void removeAllSubtasks() {
         Epic epic = (Epic) create(Type.EPIC);
         int epicId = manager.saveEpic(epic);
@@ -205,13 +205,13 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         assertTrue(manager.getEpicByID(epicId).getSubtaskList().isEmpty());
     }
 
-    @Override
+    @Test
     public void getHistory() {
         Task task = create(Type.TASK);;
         int taskId = manager.saveTask(task);
         Epic epic = (Epic) create(Type.EPIC);
         int epicId = manager.saveEpic(epic);
-        Subtask subtask = new Subtask("1", "1", Status.NEW, epicId, 15, "2016-11-09 10:30");
+        Subtask subtask = new Subtask("1", "1", Status.NEW, epicId, 15, "2017-11-09 10:30");
         int subtaskId = manager.saveSubtask(subtask);
         manager.getTaskByID(taskId);
         manager.getEpicByID(epicId);
@@ -224,107 +224,107 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         assertEquals(history, manager.getHistory());
     }
 
-    @Override
+    @Test
     public void getTaskWhenListIsEmpty() {
         assertNull(manager.getTaskByID(100));
     }
 
-    @Override
+    @Test
     public void getEpicWhenListIsEmpty() {
         assertNull(manager.getEpicByID(100));
     }
 
-    @Override
+    @Test
     public void getSubtaskWhenListIsEmpty() {
         assertNull(manager.getSubtaskByID(100));
     }
 
-    @Override
+    @Test
     public void updateTaskWhenListIsEmpty() {
         Task task = create(Type.TASK);;
         assertNull(manager.updateTask(task));
     }
 
-    @Override
+    @Test
     public void updateEpicWhenListIsEmpty() {
         Epic epic = (Epic) create(Type.EPIC);
         assertNull(manager.updateTask(epic));
     }
 
-    @Override
+    @Test
     public void updateSubtaskWhenListIsEmpty() {
         Subtask subtask = new Subtask("1", "1", Status.NEW, 100, 15, "2016-11-09 10:30");
         assertNull(manager.updateTask(subtask));
     }
 
-    @Override
+    @Test
     public void removeTaskWhenListIsEmpty() {
         assertEquals("Нельзя удалить задачу №" + 0 + ", так как ее нет.", manager.removeTaskByID(0));
         assertNull(manager.getAllTasks());
     }
 
-    @Override
+    @Test
     public void removeEpicWhenListIsEmpty() {
         assertEquals("Нельзя удалить эпик №" + 0 + ", так как его нет.", manager.removeEpicByID(0));
         assertNull(manager.getAllEpics());
     }
 
-    @Override
+    @Test
     public void removeSubtaskWhenListIsEmpty() {
         assertEquals("Нельзя удалить подзадачу №" + 0 + ", так как ее нет.", manager.removeSubtaskByID(0));
         assertNull(manager.getAllSubtasks());
     }
 
-    @Override
+    @Test
     public void deleteAllTasksWhenListIsEmpty() {
         assertEquals("Список задач пуст, удалять нечего.", manager.deleteAllTasks());
     }
 
-    @Override
+    @Test
     public void deleteAllEpicsWhenListIsEmpty() {
         assertEquals("Список эпиков пуст, нечего удалять.", manager.deleteAllEpics());
     }
 
-    @Override
+    @Test
     public void deleteAllSubtasksWhenListIsEmpty() {
         assertEquals("Список подзадач пуст, нечего удалять.", manager.deleteAllSubtasks());
     }
 
-    @Override
+    @Test
     public void getHistoryWhenListIsEmpty() {
         assertNull(manager.getHistory());
     }
 
-    @Override
+    @Test
     public void getTaskByInvalidId() {
         int taskId = manager.saveTask(create(Type.TASK));
         assertNull(manager.getTaskByID(0));
     }
 
-    @Override
+    @Test
     public void getEpicByInvalidId() {
         int epicId = manager.saveEpic((Epic) create(Type.EPIC));
         assertNull(manager.getEpicByID(0));
     }
 
-    @Override
+    @Test
     public void getSubtaskByInvalidId() {
         int epicId = manager.saveEpic((Epic) create(Type.EPIC));
         int subtaskId = manager.saveSubtask(new Subtask("0", "0", Status.NEW, epicId, 15, "2016-11-09 10:30"));
         assertNull(manager.getSubtaskByID(0));
     }
 
-    @Override
+    @Test
     public void removeTaskByInvalidId() {
         assertEquals("Нельзя удалить задачу №" + 0 + ", так как ее нет.", manager.removeTaskByID(0));
     }
 
-    @Override
+    @Test
     public void removeEpicByInvalidId() {
         assertEquals("Нельзя удалить эпик №" + 0 + ", так как его нет.", manager.removeEpicByID(0));
     }
 
-    @Override
+    @Test
     public void removeSubtaskByInvalidId() {
         assertEquals("Нельзя удалить подзадачу №" + 0 + ", так как ее нет.", manager.removeSubtaskByID(0));
     }
