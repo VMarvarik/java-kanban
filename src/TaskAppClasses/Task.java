@@ -93,9 +93,17 @@ public class Task implements Comparable<Task> {
         String toString = "TaskId:" + id + ", название:<" + name + ">, описание:<" + description + ">, статус:<" + status
                 + ">, длительность:<" + duration + ">, дата и время старта:<";
         if (startTime == null) {
-            return toString + "отсутствует>.";
+            toString += "отсутствует";
+        } else {
+            toString += startTime.format(formatter);
         }
-        return toString + startTime.format(formatter) + ">.";
+        toString += ">, дата и время окончания:<";
+        if (endTime == null) {
+            toString += "отсутствует>.";
+        } else {
+            toString += endTime.format(formatter) + ">.";
+        }
+        return toString;
     }
 
     public int compareTo(Task task){

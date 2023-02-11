@@ -11,16 +11,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public static void main(String[] args) {
         FileBackedTasksManager fileBackedTasksManager = Managers.getFileBacked("src/Backup.csv");
         System.out.println("Создаем задачи:");
-        Task taskOne = new Task("01", "01", Status.NEW, 10, "2000-10-10 10:30");
+        Task taskOne = new Task("01", "01", Status.NEW, 10, null);
         int taskIdOne = fileBackedTasksManager.saveTask(taskOne);
         Task taskTwo = new Task("02", "02", Status.IN_PROGRESS, 20, "2000-10-10 19:00");
         int taskIdTwo = fileBackedTasksManager.saveTask(taskTwo);
+
         Epic epicOne = new Epic("1", "1", Status.NEW, 0, "2000-09-10 20:00");
         int epicIdOne = fileBackedTasksManager.saveEpic(epicOne);
+        Subtask subtaskOne = new Subtask("111", "111", Status.IN_PROGRESS, epicIdOne, 60, "2023-02-07 10:00");
+        int subtaskIdOne = fileBackedTasksManager.saveSubtask(subtaskOne);
+        Subtask subtask3 = new Subtask("333", "333", Status.IN_PROGRESS, epicIdOne, 60, "2023-02-08 11:00" );
+        fileBackedTasksManager.saveSubtask(subtask3);
+
         Epic epicTwo = new Epic("2", "2", Status.NEW, 100, "2000-09-10 17:00");
         int epicIdTwo = fileBackedTasksManager.saveEpic(epicTwo);
-        Subtask subtaskOne = new Subtask("111", "111", Status.IN_PROGRESS, epicIdOne, 15, "2000-10-10 18:00");
-        int subtaskIdOne = fileBackedTasksManager.saveSubtask(subtaskOne);
         Subtask subtaskTwo = new Subtask("222", "222", Status.NEW, epicIdTwo, 100, "2000-10-10 20:00");
         int subtaskIdTwo = fileBackedTasksManager.saveSubtask(subtaskTwo);
         System.out.println("Выводим задачи в консоль:");
@@ -52,7 +56,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public void save() {
         try (Writer fileWriter = new FileWriter(file)) {
-            fileWriter.write("id,type,name,status,description,duration minutes,start time,epic");
+            fileWriter.write("id,type,name,status,description,duration minutes,start time,end time,epic");
             fileWriter.write("\n");
             for (Task task : getTaskHashMap().values()) {
                 fileWriter.write(toString(task) + "\n");
@@ -77,8 +81,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 task.getName(),
                 task.getStatus().toString(),
                 task.getDescription(),
-                Long.toString(task.getDuration()),
-                task.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+                Long.toString(task.getDuration()));
+        if (task.getStartTime() != null) {
+            toString += "," + task.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            toString += "," + task.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        } else {
+            toString += "," + null + "," + null;
+        }
         if (task.getType().equals(Type.SUBTASK)) {
             Subtask subtask = (Subtask) task;
             toString += "," + subtask.getEpicId();
@@ -100,16 +109,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static Task fromString(String value) {
         String[] split = value.split(",");
+        String timeFromString = null;
+        if (!split[6].equals("null")) {
+            timeFromString = split[6];
+        }
         if (split[1].equals("EPIC")) {
-            Epic epic = new Epic(split[2], split[4], Status.valueOf(split[3]), Long.parseLong(split[5]), split[6]);
+            Epic epic = new Epic(split[2], split[4], Status.valueOf(split[3]), Long.parseLong(split[5]), timeFromString);
             epic.setId(Integer.parseInt(split[0]));
             return epic;
         } else if (split[1].equals("SUBTASK")) {
-            Subtask subtask = new Subtask(split[2], split[4], Status.valueOf(split[3]), Integer.parseInt(split[7]), Long.parseLong(split[5]), split[6]);
+            Subtask subtask = new Subtask(split[2], split[4], Status.valueOf(split[3]), Integer.parseInt(split[8]), Long.parseLong(split[5]), timeFromString);
             subtask.setId(Integer.parseInt(split[0]));
             return subtask;
         }
-        Task task = new Task(split[2],split[4],Status.valueOf(split[3]), Long.parseLong(split[5]), split[6]);
+        Task task = new Task(split[2],split[4],Status.valueOf(split[3]), Long.parseLong(split[5]), timeFromString);
         task.setId(Integer.parseInt(split[0]));
         return task;
     }
@@ -181,6 +194,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             return task.getId();
         }
         getTaskHashMap().put(task.getId(), task);
+        addToPrioritized(task);
         save();
         return task.getId();
     }
@@ -246,6 +260,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             return epic.getId();
         }
         getEpicHashMap().put(epic.getId(), epic);
+        addToPrioritized(epic);
         save();
         return epic.getId();
     }
@@ -323,6 +338,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         getSubtaskHashMap().put(subtask.getId(), subtask);
         getEpicHashMap().get(subtask.getEpicId()).fillSubtaskList(subtask);
+        addToPrioritized(subtask);
         epicStatusCheck();
         save();
         return subtask.getId();
@@ -376,15 +392,5 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             return "Подзадача №" + id + " удалена.";
         }
         return "Нельзя удалить подзадачу №" + id + ", так как ее нет.";
-    }
-
-    @Override
-    public ArrayList<Task> getPrioritizedTasks() {
-        if (super.getPrioritizedTasks() == null &&
-                (!getTaskHashMap().isEmpty() || !getEpicHashMap().isEmpty() || !getSubtaskHashMap().isEmpty())) {
-            renewPrioritizedTree();
-            return super.getPrioritizedTasks();
-        }
-        return super.getPrioritizedTasks();
     }
 }

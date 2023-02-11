@@ -57,14 +57,12 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         manager.saveTask(task3);
         Epic epic4 = new Epic("#4", "#4", Status.NEW, 15,"2002-11-09 10:30");
         manager.saveEpic(epic4);
-        Task[] prioritizedTasks = new Task[5];
+        Task[] prioritizedTasks = new Task[3];
         prioritizedTasks[0] = task2;
         prioritizedTasks[1] = task1;
-        prioritizedTasks[2] = epic4;
-        prioritizedTasks[3] = task3;
+        prioritizedTasks[2] = task3;
         Epic epic5 = new Epic("#5", "#5", Status.NEW, 15,null);
         manager.saveEpic(epic5);
-        prioritizedTasks[4] = epic5;
         assertArrayEquals(prioritizedTasks, manager.getPrioritizedTasks().toArray());
     }
 

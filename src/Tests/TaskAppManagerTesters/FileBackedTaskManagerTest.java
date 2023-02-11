@@ -54,7 +54,7 @@ public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
             String[] lines = stringFile.split("\n");
             assertEquals(3, lines.length); //размер 3, потому что в файле две пустые строки
             assertEquals(" ", lines[lines.length - 1]); // проверяем пустую строку истории
-            assertEquals("id,type,name,status,description,duration minutes,start time,epic", lines[0]);
+            assertEquals("id,type,name,status,description,duration minutes,start time,end time,epic", lines[0]);
         } catch (IOException ignored) {}
         FileBackedTasksManager newManager = FileBackedTasksManager.loadFromFile(manager.getFile());
         assertNull(newManager.getAllTasks());
@@ -72,7 +72,7 @@ public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
             String[] lines = stringFile.split("\n");
             assertEquals(4, lines.length);
             assertEquals(" ", lines[lines.length - 1]); // проверяем пустую строку истории
-            assertEquals("201,EPIC,01,NEW,01,15,2015-11-09 10:30", lines[1]);
+            assertEquals("201,EPIC,01,NEW,01,15,2015-11-09 10:30,2015-11-09 10:45", lines[1]);
         } catch (IOException ignored) {}
         FileBackedTasksManager newManager = FileBackedTasksManager.loadFromFile(manager.getFile());
         assertEquals(manager.getEpicByID(epicId).toString(), newManager.getEpicByID(epicId).toString());
@@ -89,8 +89,8 @@ public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
             String stringFile = Files.readString(Path.of(manager.getFile().getPath()));
             String[] lines = stringFile.split("\n");
             assertEquals(5, lines.length);
-            assertEquals("101,TASK,01,NEW,01,15,2016-11-09 10:30", lines[1]);
-            assertEquals("201,EPIC,01,NEW,01,15,2015-11-09 10:30", lines[2]);
+            assertEquals("101,TASK,01,NEW,01,15,2016-11-09 10:30,2016-11-09 10:45", lines[1]);
+            assertEquals("201,EPIC,01,NEW,01,15,2015-11-09 10:30,2015-11-09 10:45", lines[2]);
             assertEquals(" ", lines[lines.length - 1]); // проверяем пустую строку истории
         } catch (IOException ignored) {}
         FileBackedTasksManager newManager = FileBackedTasksManager.loadFromFile(manager.getFile());

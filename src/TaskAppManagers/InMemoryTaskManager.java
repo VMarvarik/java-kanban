@@ -13,6 +13,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Subtask> subtaskHashMap = new HashMap<>();
     private final InMemoryHistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
     private TreeSet<Task> prioritizedTree = new TreeSet<>();
+
     public InMemoryHistoryManager getInMemoryHistoryManager() {
         return inMemoryHistoryManager;
     }
@@ -214,9 +215,9 @@ public class InMemoryTaskManager implements TaskManager {
                 int epicID = subtask.getEpicId();
                 epicHashMap.get(epicID).getSubtaskList().clear();
                 epicHashMap.get(epicID).timeCheck();
+                removeFromPrioritizedTree(subtask);
             }
             subtaskHashMap.clear();
-            renewPrioritizedTree();
             return "Все подзадачи удалены.";
         }
         return "Список подзадач пуст, нечего удалять.";
@@ -299,8 +300,8 @@ public class InMemoryTaskManager implements TaskManager {
                     break;
                 }
             }
+            removeFromPrioritizedTree(subtaskHashMap.get(id));
             subtaskHashMap.remove(id);
-            renewPrioritizedTree();
             return "Подзадача №" + id + " удалена.";
         }
         return "Нельзя удалить подзадачу №" + id + ", так как ее нет.";
@@ -346,7 +347,9 @@ public class InMemoryTaskManager implements TaskManager {
         if (prioritizedTree.isEmpty()) {
             return null;
         }
-        return new ArrayList<>(prioritizedTree);
+        ArrayList<Task> list = new ArrayList<>(prioritizedTree);
+        list.removeIf(task -> task.getType().equals(Type.EPIC));
+        return list;
     }
 
     @Override
@@ -355,9 +358,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public void timeValidation(Task task) {
-        if (task.getStartTime() == null) {
-            prioritizedTree.add(task);
-        } else {
+        if (task.getStartTime() != null) {
             final LocalDateTime startTime;
             final LocalDateTime endTime;
             startTime = task.getStartTime();
@@ -375,8 +376,8 @@ public class InMemoryTaskManager implements TaskManager {
                     throw new TaskValidationException("Задача пересекается с id=" + t.getId() + " c " + existStart + " по " + existEnd);
                 }
             }
-            prioritizedTree.add(task);
         }
+        prioritizedTree.add(task);
     }
 
     public void removeFromPrioritizedTree(Task task) {
@@ -392,5 +393,9 @@ public class InMemoryTaskManager implements TaskManager {
         newPrioritizedTree.addAll(subtaskHashMap.values());
         prioritizedTree.clear();
         prioritizedTree = newPrioritizedTree;
+    }
+
+    public void addToPrioritized(Task task) {
+        prioritizedTree.add(task);
     }
 }

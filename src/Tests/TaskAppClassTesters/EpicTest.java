@@ -68,7 +68,7 @@ public class EpicTest {
         Subtask subtask2 = new Subtask("#2", "#2", Status.NEW, epic2.getId(), 40, "2000-01-11 10:30");
         epic2.fillSubtaskList(subtask2);
         assertEquals("2000-01-09 10:30", epic2.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
-        assertEquals(40, epic2.getDuration());
+        assertEquals(70, epic2.getDuration());
         assertEquals(subtask2.getEndTime(), epic2.getEndTime());
     }
 }

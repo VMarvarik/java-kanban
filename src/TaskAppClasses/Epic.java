@@ -2,6 +2,7 @@ package TaskAppClasses;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 public class Epic extends Task {
     private final ArrayList<Subtask> subtaskList;
@@ -24,20 +25,22 @@ public class Epic extends Task {
     }
 
     public void timeCheck() {
-        for (Subtask subtask : this.subtaskList) {
-            LocalDateTime subtaskStartTime = subtask.getStartTime();
-            LocalDateTime subtaskEndTime = subtask.getEndTime();
-            int duration = 0;
-            duration += subtask.getDuration();
-            this.duration = duration;
-            if (subtaskStartTime != null && subtaskStartTime.isBefore(this.startTime)) {
-                this.startTime = subtaskStartTime;
+        this.duration = 0;
+        TreeSet<Subtask> prioritizedTree = new TreeSet<>(subtaskList);
+        LocalDateTime latestTime;
+        if (!prioritizedTree.isEmpty() && prioritizedTree.first().getStartTime() != null) {
+            this.startTime = prioritizedTree.first().getStartTime();
+            latestTime = prioritizedTree.first().getEndTime();
+            for (Subtask subtask : prioritizedTree) {
+                if (subtask.getEndTime() != null && subtask.getEndTime().isAfter(latestTime)) {
+                    latestTime = subtask.getEndTime();
+                }
+                this.duration += subtask.getDuration();
             }
-            if (subtaskEndTime != null && subtaskEndTime.isAfter(this.endTime)) {
-                this.endTime = subtaskEndTime;
-            } else if (subtaskEndTime != null) {
-                this.endTime = super.getEndTime();
-            }
+            this.endTime = latestTime;
+        } else {
+            this.startTime = null;
+            this.endTime = null;
         }
     }
 
@@ -75,13 +78,19 @@ public class Epic extends Task {
                 + ">, длительность:<" + duration + ">, дата и время старта:<";
 
         if (startTime == null) {
-            result += "отсутствует>." + ">, подзадачи:";
+            result += "отсутствует>,";
         } else {
-            result += startTime.format(formatter) + ">, подзадачи:";
+            result += startTime.format(formatter);
         }
-
+        result += ">, дата и время окончания:<";
+        if (endTime == null) {
+            result += "отсутствует>,";
+        } else {
+            result += endTime.format(formatter) + ">,";
+        }
+        result += " подзадачи:";
         if (subtaskList.isEmpty()) {
-            result += "<список подзадач пока пуст";
+            result += "<список подзадач пока пуст>";
         } else {
             result += "<" + subtaskList;
         }
