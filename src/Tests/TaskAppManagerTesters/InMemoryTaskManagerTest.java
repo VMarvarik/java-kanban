@@ -20,7 +20,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         if (type.equals(Type.TASK)) {
             return new Task ("01", "01", Status.NEW, 15, "2016-11-09 10:30");
         } else if (type.equals(Type.EPIC)) {
-            return new Epic ("01", "01", Status.NEW, 15, "2015-11-09 10:30");
+            return new Epic ("01", "01", Status.NEW);
         }
         return new Subtask("01", "01", Status.NEW, 0, 15, "2014-11-09 10:30");
     }
@@ -36,15 +36,9 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         manager.saveTask(task1);
         Task task2 = new Task("#2", "#2", Status.NEW, 15,"2000-11-09 10:30");
         manager.saveTask(task2);
-        Epic epic4 = new Epic("#4", "#4", Status.NEW, 15,"2002-11-09 10:30");
-        manager.saveEpic(epic4);
         //Добавляем задачу с пересекающим временем
         Task task3 = new Task("#3", "#3", Status.NEW, 15,"2000-11-09 10:40");
         assertEquals(0, manager.saveTask(task3));
-        System.out.println(manager.getAllTasks());
-        //Добавляем эпик с пересекающим временем
-        Epic epic5 = new Epic("#5", "#5", Status.NEW, 15,"2002-11-09 10:40");
-        assertEquals(0, manager.saveEpic(epic5));
     }
 
     @Test
@@ -55,14 +49,10 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         manager.saveTask(task2);
         Task task3 = new Task("#3", "#3", Status.NEW, 15," ");
         manager.saveTask(task3);
-        Epic epic4 = new Epic("#4", "#4", Status.NEW, 15,"2002-11-09 10:30");
-        manager.saveEpic(epic4);
         Task[] prioritizedTasks = new Task[3];
         prioritizedTasks[0] = task2;
         prioritizedTasks[1] = task1;
         prioritizedTasks[2] = task3;
-        Epic epic5 = new Epic("#5", "#5", Status.NEW, 15,null);
-        manager.saveEpic(epic5);
         assertArrayEquals(prioritizedTasks, manager.getPrioritizedTasks().toArray());
     }
 
@@ -123,7 +113,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     public void updateEpic() {
         Epic epic = (Epic) create(Type.EPIC);
         int epicId = manager.saveEpic(epic);
-        Epic newEpic = new Epic("2", "2", Status.NEW, 15, "2016-11-09 10:30");
+        Epic newEpic = new Epic("2", "2", Status.NEW);
         newEpic.setId(epicId);
         manager.updateEpic(newEpic);
         assertNotNull(manager.updateEpic(newEpic));
@@ -184,7 +174,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     @Test
     public void removeAllEpics() {
         Epic epic1 = (Epic) create(Type.EPIC);
-        Epic epic2 = new Epic("1", "1", Status.NEW, 15, "2016-11-09 10:30");
+        Epic epic2 = new Epic("1", "1", Status.NEW);
         manager.saveEpic(epic1);
         manager.saveEpic(epic2);
         manager.deleteAllEpics();

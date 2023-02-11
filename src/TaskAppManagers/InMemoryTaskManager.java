@@ -121,6 +121,7 @@ public class InMemoryTaskManager implements TaskManager {
             return "Список эпиков пуст, нечего удалять.";
         } else {
             epicHashMap.clear();
+            subtaskHashMap.clear();
             renewPrioritizedTree();
         }
         return "Все эпики удалены.";
@@ -140,28 +141,18 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int saveEpic(Epic epic) {
-        try {
+        if (epic != null) {
             epic.setId(++epicId);
-            timeValidation(epic);
             epicHashMap.put(epic.getId(), epic);
             System.out.println("Эпик №" + epicId + " сохранен.");
-        } catch (TaskValidationException exception) {
-            --epicId;
-            epic.setId(0);
+            return epic.getId();
         }
-        return epic.getId();
+        return 0;
     }
 
     @Override
     public Epic updateEpic(Epic newEpic) {
         if (epicHashMap.containsKey(newEpic.getId())) {
-            Epic oldEpic = epicHashMap.get(newEpic.getId());
-            try {
-                removeFromPrioritizedTree(oldEpic);
-                timeValidation(newEpic);
-            } catch (TaskValidationException exception) {
-                prioritizedTree.add(oldEpic);
-            }
             ArrayList<Subtask> newEpicSubtaskList = epicHashMap.get(newEpic.getId()).getSubtaskList();
             newEpic.getSubtaskList().addAll(newEpicSubtaskList);
             epicHashMap.put(newEpic.getId(), newEpic);
@@ -347,9 +338,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (prioritizedTree.isEmpty()) {
             return null;
         }
-        ArrayList<Task> list = new ArrayList<>(prioritizedTree);
-        list.removeIf(task -> task.getType().equals(Type.EPIC));
-        return list;
+        return new ArrayList<>(prioritizedTree);
     }
 
     @Override
@@ -389,7 +378,6 @@ public class InMemoryTaskManager implements TaskManager {
     public void renewPrioritizedTree() {
         TreeSet<Task> newPrioritizedTree = new TreeSet<>(Comparator.comparing(Task::getStartTime));
         newPrioritizedTree.addAll(taskHashMap.values());
-        newPrioritizedTree.addAll(epicHashMap.values());
         newPrioritizedTree.addAll(subtaskHashMap.values());
         prioritizedTree.clear();
         prioritizedTree = newPrioritizedTree;

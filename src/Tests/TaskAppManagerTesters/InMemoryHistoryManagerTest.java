@@ -30,7 +30,7 @@ class InMemoryHistoryManagerTest {
         if (type.equals(Type.TASK)) {
             return new Task ("01", "01", Status.NEW, 15, "2016-11-09 10:30");
         } else if (type.equals(Type.EPIC)) {
-            return new Epic("01", "01", Status.NEW, 15, "2016-11-09 10:30");
+            return new Epic("01", "01", Status.NEW);
         }
         return new Subtask("01", "01", Status.NEW, 0, 15, "2016-11-09 10:30");
     }

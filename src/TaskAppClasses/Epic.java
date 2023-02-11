@@ -7,11 +7,11 @@ import java.util.TreeSet;
 public class Epic extends Task {
     private final ArrayList<Subtask> subtaskList;
 
-    public Epic(String name, String description, Status status, long duration, String startTime) {
-        super(name, description, status, duration, startTime);
+    public Epic(String name, String description, Status status) {
+        super(name, description, status, 0, null);
         super.type = Type.EPIC;
         subtaskList = new ArrayList<>();
-        this.endTime = super.getEndTime();
+        this.endTime = null;
     }
 
     public void fillSubtaskList(Subtask subtask) {

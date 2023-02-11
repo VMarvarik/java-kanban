@@ -16,14 +16,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         Task taskTwo = new Task("02", "02", Status.IN_PROGRESS, 20, "2000-10-10 19:00");
         int taskIdTwo = fileBackedTasksManager.saveTask(taskTwo);
 
-        Epic epicOne = new Epic("1", "1", Status.NEW, 0, "2000-09-10 20:00");
+        Epic epicOne = new Epic("1", "1", Status.NEW);
         int epicIdOne = fileBackedTasksManager.saveEpic(epicOne);
         Subtask subtaskOne = new Subtask("111", "111", Status.IN_PROGRESS, epicIdOne, 60, "2023-02-07 10:00");
         int subtaskIdOne = fileBackedTasksManager.saveSubtask(subtaskOne);
         Subtask subtask3 = new Subtask("333", "333", Status.IN_PROGRESS, epicIdOne, 60, "2023-02-08 11:00" );
         fileBackedTasksManager.saveSubtask(subtask3);
 
-        Epic epicTwo = new Epic("2", "2", Status.NEW, 100, "2000-09-10 17:00");
+        Epic epicTwo = new Epic("2", "2", Status.NEW);
         int epicIdTwo = fileBackedTasksManager.saveEpic(epicTwo);
         Subtask subtaskTwo = new Subtask("222", "222", Status.NEW, epicIdTwo, 100, "2000-10-10 20:00");
         int subtaskIdTwo = fileBackedTasksManager.saveSubtask(subtaskTwo);
@@ -114,7 +114,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             timeFromString = split[6];
         }
         if (split[1].equals("EPIC")) {
-            Epic epic = new Epic(split[2], split[4], Status.valueOf(split[3]), Long.parseLong(split[5]), timeFromString);
+            Epic epic = new Epic(split[2], split[4], Status.valueOf(split[3]));
             epic.setId(Integer.parseInt(split[0]));
             return epic;
         } else if (split[1].equals("SUBTASK")) {
@@ -235,6 +235,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             return "Список эпиков пуст, нечего удалять.";
         } else {
             getEpicHashMap().clear();
+            getSubtaskHashMap().clear();
             renewPrioritizedTree();
             save();
         }
@@ -260,7 +261,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             return epic.getId();
         }
         getEpicHashMap().put(epic.getId(), epic);
-        addToPrioritized(epic);
         save();
         return epic.getId();
     }
@@ -268,11 +268,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public Epic updateEpic(Epic newEpic) {
         if (getEpicHashMap().containsKey(newEpic.getId())) {
-            Epic oldEpic = getEpicHashMap().get(newEpic.getId());
-            if (!(newEpic.getStartTime() == oldEpic.getStartTime() && newEpic.getEndTime() == oldEpic.getEndTime())) {
-                timeValidation(newEpic);
-            }
-            removeFromPrioritizedTree(oldEpic);
             ArrayList<Subtask> newEpicSubtaskList = getEpicHashMap().get(newEpic.getId()).getSubtaskList();
             newEpic.getSubtaskList().addAll(newEpicSubtaskList);
             getEpicHashMap().put(newEpic.getId(), newEpic);
