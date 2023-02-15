@@ -68,7 +68,6 @@ public class KVTaskClient {
                         jObj.get("Epics").getAsString(),
                         jObj.get("Subtasks").getAsString(),
                         jObj.get("History").getAsString());
-                System.out.println(jObj.get("History").getAsString());
                 System.out.println("Данные успешно выгружены с сервера");
                 return toString;
             } else {
