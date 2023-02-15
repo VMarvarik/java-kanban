@@ -17,7 +17,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     private String key;
 
-    Gson gson;
+    private final Gson gson;
 
 
     public HttpTaskManager(String urlServer) {

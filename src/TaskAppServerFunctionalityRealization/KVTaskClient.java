@@ -80,8 +80,4 @@ public class KVTaskClient {
         }
         return null;
     }
-
-    public String getApiToken() {
-        return apiToken;
-    }
 }

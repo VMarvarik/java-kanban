@@ -4,9 +4,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
@@ -21,7 +19,6 @@ public class KVServer {
     private final String apiToken;
     private final HttpServer server;
     private final Map<String, String> data = new HashMap<>();
-    private static final Gson gson = new Gson();
 
     public KVServer() throws IOException {
         apiToken = generateApiToken();
