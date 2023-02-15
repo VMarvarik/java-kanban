@@ -1,4 +1,6 @@
-package TaskAppClasses;
+package TaskAppCustomLinkedListRealization;
+
+import TaskAppClasses.Task;
 
 public class Node {
     private Task task;

@@ -1,4 +1,4 @@
-package TaskAppClasses;
+package TaskAppExceptions;
 
 public class TaskValidationException extends RuntimeException {
 

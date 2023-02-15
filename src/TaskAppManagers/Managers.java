@@ -1,8 +1,10 @@
 package TaskAppManagers;
 
+import TaskAppServerFunctionalityRealization.HttpTaskManager;
+
 public final class Managers {
-    public static InMemoryTaskManager getDefault() {
-        return new InMemoryTaskManager();
+    public static HttpTaskManager getDefault() {
+        return new HttpTaskManager("http://localhost:8078/");
     }
 
     public static FileBackedTasksManager getFileBacked(String filePath) {

@@ -1,4 +1,7 @@
-package TaskAppClasses;
+package TaskAppCustomLinkedListRealization;
+import TaskAppClasses.Task;
+import TaskAppCustomLinkedListRealization.Node;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 

@@ -1,5 +1,8 @@
 package TaskAppClasses;
 
+import TaskAppEnums.Status;
+import TaskAppEnums.Type;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.TreeSet;

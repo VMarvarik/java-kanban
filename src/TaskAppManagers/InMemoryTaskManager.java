@@ -1,7 +1,11 @@
 package TaskAppManagers;
 import TaskAppClasses.*;
+import TaskAppEnums.Status;
+import TaskAppExceptions.TaskValidationException;
+
 import java.time.LocalDateTime;
 import java.util.*;
+
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -98,9 +102,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public String removeTaskByID(int id) {
         if (taskHashMap.get(id) != null){
+            removeFromPrioritizedTree(taskHashMap.get(id));
             taskHashMap.remove(id);
             inMemoryHistoryManager.remove(id);
-            renewPrioritizedTree();
             return "Задача №" + id + " удалена.";
         }
         return "Нельзя удалить задачу №" + id + ", так как ее нет.";
@@ -173,7 +177,6 @@ public class InMemoryTaskManager implements TaskManager {
             }
             inMemoryHistoryManager.remove(epicId);
             epicHashMap.remove(epicId);
-            renewPrioritizedTree();
             return "Эпик №" + epicId + " удален.";
 
         }
@@ -183,8 +186,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public String getEpicSubtasks(int epicId){
         if (!epicHashMap.get(epicId).getSubtaskList().isEmpty()) {
-            System.out.println("Список подзадач эпика № " + epicId + " - "
-                    + Arrays.toString(epicHashMap.get(epicId).getSubtaskList().toArray()));
             return Arrays.toString(epicHashMap.get(epicId).getSubtaskList().toArray());
         }
         System.out.println("Список подзадач эпика №" + epicId + "пуст.");
@@ -385,5 +386,29 @@ public class InMemoryTaskManager implements TaskManager {
 
     public void addToPrioritized(Task task) {
         prioritizedTree.add(task);
+    }
+
+    public int getTaskId() {
+        return taskId;
+    }
+
+    public int getEpicId() {
+        return epicId;
+    }
+
+    public int getSubtaskId() {
+        return subtaskId;
+    }
+
+    public void setTaskId(int taskId) {
+        this.taskId = taskId;
+    }
+
+    public void setEpicId(int epicId) {
+        this.epicId = epicId;
+    }
+
+    public void setSubtaskId(int subtaskId) {
+        this.subtaskId = subtaskId;
     }
 }

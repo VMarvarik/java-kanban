@@ -1,6 +1,8 @@
 package Tests.TaskAppManagerTesters;
 
 import TaskAppClasses.*;
+import TaskAppEnums.Status;
+import TaskAppEnums.Type;
 import TaskAppManagers.FileBackedTasksManager;
 import TaskAppManagers.Managers;
 import org.junit.Test;

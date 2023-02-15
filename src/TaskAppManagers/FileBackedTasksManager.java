@@ -1,5 +1,9 @@
 package TaskAppManagers;
 import TaskAppClasses.*;
+import TaskAppEnums.Status;
+import TaskAppEnums.Type;
+import TaskAppExceptions.ManagerSaveException;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,42 +12,11 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    public static void main(String[] args) {
-        FileBackedTasksManager fileBackedTasksManager = Managers.getFileBacked("src/Backup.csv");
-        System.out.println("Создаем задачи:");
-        Task taskOne = new Task("01", "01", Status.NEW, 10, null);
-        int taskIdOne = fileBackedTasksManager.saveTask(taskOne);
-        Task taskTwo = new Task("02", "02", Status.IN_PROGRESS, 20, "2000-10-10 19:00");
-        int taskIdTwo = fileBackedTasksManager.saveTask(taskTwo);
+    private File file;
 
-        Epic epicOne = new Epic("1", "1", Status.NEW);
-        int epicIdOne = fileBackedTasksManager.saveEpic(epicOne);
-        Subtask subtaskOne = new Subtask("111", "111", Status.IN_PROGRESS, epicIdOne, 60, "2023-02-07 10:00");
-        int subtaskIdOne = fileBackedTasksManager.saveSubtask(subtaskOne);
-        Subtask subtask3 = new Subtask("333", "333", Status.IN_PROGRESS, epicIdOne, 60, "2023-02-08 11:00" );
-        fileBackedTasksManager.saveSubtask(subtask3);
-
-        Epic epicTwo = new Epic("2", "2", Status.NEW);
-        int epicIdTwo = fileBackedTasksManager.saveEpic(epicTwo);
-        Subtask subtaskTwo = new Subtask("222", "222", Status.NEW, epicIdTwo, 100, "2000-10-10 20:00");
-        int subtaskIdTwo = fileBackedTasksManager.saveSubtask(subtaskTwo);
-        System.out.println("Выводим задачи в консоль:");
-        System.out.println(fileBackedTasksManager.getTaskByID(taskIdOne));
-        System.out.println(fileBackedTasksManager.getTaskByID(taskIdTwo));
-        System.out.println("Выводим эпики в консоль:");
-        System.out.println(fileBackedTasksManager.getEpicByID(epicIdOne));
-        System.out.println(fileBackedTasksManager.getEpicByID(epicIdTwo));
-        System.out.println("Выводим подзадачи в консоль:");
-        System.out.println(fileBackedTasksManager.getSubtaskByID(subtaskIdOne));
-        System.out.println(fileBackedTasksManager.getSubtaskByID(subtaskIdTwo));
-        System.out.println("Выводим задачи по приоритету:");
-        System.out.println(fileBackedTasksManager.getPrioritizedTasks());
-        System.out.println("Загружаем новый менеджер из файла.");
-        FileBackedTasksManager newFileBackedManager = loadFromFile(fileBackedTasksManager.getFile());
-        System.out.println("Выводим задачи по приоритету:");
-        System.out.println(newFileBackedManager.getPrioritizedTasks());
+    public FileBackedTasksManager() {
+        super();
     }
-    private final File file;
 
     public FileBackedTasksManager(String filepath) {
         super();
@@ -170,6 +143,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             return "Список задач пуст, удалять нечего.";
         } else {
             getTaskHashMap().clear();
+            renewPrioritizedTree();
             save();
         }
         return "Все задачи удалены.";
@@ -202,7 +176,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public Task updateTask(Task newTask) {
         if (getTaskHashMap().containsKey(newTask.getId())) {
             Task oldTask = getTaskHashMap().get(newTask.getId());
-            if (!(newTask.getStartTime() == oldTask.getStartTime() && newTask.getEndTime() == oldTask.getEndTime())) {
+            if (newTask.getStartTime() != null && oldTask.getStartTime() != null
+                    && !(newTask.getStartTime() == oldTask.getStartTime() && newTask.getEndTime() == oldTask.getEndTime())) {
                 timeValidation(newTask);
             }
             removeFromPrioritizedTree(oldTask);
@@ -236,7 +211,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } else {
             getEpicHashMap().clear();
             getSubtaskHashMap().clear();
-            renewPrioritizedTree();
             save();
         }
         return "Все эпики удалены.";
@@ -289,7 +263,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
             getInMemoryHistoryManager().remove(epicId);
             getEpicHashMap().remove(epicId);
-            renewPrioritizedTree();
             save();
             return "Эпик №" + epicId + " удален.";
 
@@ -343,7 +316,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public Subtask updateSubtask(Subtask newSubtask) {
         if (getSubtaskHashMap().containsKey(newSubtask.getId())) {
             Subtask oldSubtask = getSubtaskHashMap().get(newSubtask.getId());
-            if (!(newSubtask.getStartTime() == oldSubtask.getStartTime() && newSubtask.getEndTime() == oldSubtask.getEndTime())) {
+            if (newSubtask.getStartTime() != null && oldSubtask.getStartTime() != null &&
+                    !(newSubtask.getStartTime() == oldSubtask.getStartTime() && newSubtask.getEndTime() == oldSubtask.getEndTime())) {
                 timeValidation(newSubtask);
             }
             removeFromPrioritizedTree(oldSubtask);
@@ -382,8 +356,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     break;
                 }
             }
+            removeFromPrioritizedTree(getSubtaskHashMap().get(id));
             getSubtaskHashMap().remove(id);
-            renewPrioritizedTree();
             return "Подзадача №" + id + " удалена.";
         }
         return "Нельзя удалить подзадачу №" + id + ", так как ее нет.";

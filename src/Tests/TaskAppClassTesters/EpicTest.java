@@ -1,7 +1,7 @@
 package Tests.TaskAppClassTesters;
 
 import TaskAppClasses.Epic;
-import TaskAppClasses.Status;
+import TaskAppEnums.Status;
 import TaskAppClasses.Subtask;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;

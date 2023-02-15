@@ -1,5 +1,8 @@
 package TaskAppClasses;
 
+import TaskAppEnums.Status;
+import TaskAppEnums.Type;
+
 public class Subtask extends Task {
     private final int epicId;
 

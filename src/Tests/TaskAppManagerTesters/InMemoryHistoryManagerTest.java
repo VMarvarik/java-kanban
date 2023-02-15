@@ -1,6 +1,8 @@
 package Tests.TaskAppManagerTesters;
 
 import TaskAppClasses.*;
+import TaskAppEnums.Status;
+import TaskAppEnums.Type;
 import TaskAppManagers.InMemoryHistoryManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
