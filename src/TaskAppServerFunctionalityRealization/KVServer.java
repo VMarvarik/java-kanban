@@ -46,7 +46,6 @@ public class KVServer {
                     return;
                 }
                 if (data.containsKey(key)) {
-                    List<String> parts = Arrays.asList(data.get(key).split(" "));
                     sendText(h, data.get(key));
                     return;
                 }
