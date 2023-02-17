@@ -29,7 +29,7 @@ public interface TaskManager {
 
     String removeEpicByID(int id);
 
-    String getEpicSubtasks(int epicId);
+    List<Subtask> getEpicSubtasks(int epicId);
 
     List<Subtask> getAllSubtasks();
 

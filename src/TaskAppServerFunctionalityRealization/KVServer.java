@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
@@ -21,11 +19,11 @@ public class KVServer {
     private final Map<String, String> data = new HashMap<>();
 
     public KVServer() throws IOException {
-        apiToken = generateApiToken();
         server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
         server.createContext("/register", this::register);
         server.createContext("/save", this::save);
         server.createContext("/load", this::load);
+        apiToken = generateApiToken();
     }
 
     private void load(HttpExchange h) throws IOException {
@@ -107,6 +105,11 @@ public class KVServer {
         System.out.println("Открой в браузере http://localhost:" + PORT + "/");
         System.out.println("API_TOKEN: " + apiToken);
         server.start();
+    }
+
+    public void stop() {
+        server.stop(0);
+        System.out.println("KVServer остановлен на " + PORT + " порту!");
     }
 
     private String generateApiToken() {

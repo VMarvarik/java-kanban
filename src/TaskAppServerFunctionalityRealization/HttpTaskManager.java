@@ -14,9 +14,7 @@ import static TaskAppEnums.Type.*;
 
 public class HttpTaskManager extends FileBackedTasksManager {
     private final KVTaskClient kvTaskClient;
-
     private String key;
-
     private final Gson gson;
 
 
@@ -42,29 +40,20 @@ public class HttpTaskManager extends FileBackedTasksManager {
             newHttpTaskManager.setEpicId(Integer.parseInt(split[2]));
             newHttpTaskManager.setSubtaskId(Integer.parseInt(split[3]));
             if (!split[4].equals("null")) {
-                saveTaskFromString(split[4], newHttpTaskManager);
+                saveTaskFromServer(split[4], newHttpTaskManager);
             }
             if (!split[5].equals("null")) {
-                saveTaskFromString(split[5], newHttpTaskManager);
+                saveTaskFromServer(split[5], newHttpTaskManager);
             }
             if (!split[6].equals("null")) {
-                saveTaskFromString(split[6], newHttpTaskManager);
+                saveTaskFromServer(split[6], newHttpTaskManager);
             }
             if (!split[7].equals("null")) {
-                saveHistoryFromString(split[7], newHttpTaskManager);
+                saveHistoryFromServer(split[7], newHttpTaskManager);
             }
         }
         return newHttpTaskManager;
     }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
     @Override
     public String toString(Task task) {
         String toString = String.join("/",
@@ -87,7 +76,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         return toString;
     }
 
-    public static Task fromString(String value) {
+    public Task taskFromString(String value) {
         String[] split = value.split("/");
         String timeFromString = null;
         if (!split[6].equals("null")) {
@@ -107,10 +96,10 @@ public class HttpTaskManager extends FileBackedTasksManager {
         return task;
     }
 
-    public void saveTaskFromString(String stringToSplit, HttpTaskManager manager) {
+    public void saveTaskFromServer(String stringToSplit, HttpTaskManager manager) {
         String[] tasksSplit = stringToSplit.split(",");
         for (int i = 0; i < tasksSplit.length; i++) {
-            String substring = new String();
+            String substring;
             if (tasksSplit.length == 1) {
                 substring = tasksSplit[i].substring(2, tasksSplit[i].length() - 2);
             } else if (i == 0) {
@@ -120,15 +109,15 @@ public class HttpTaskManager extends FileBackedTasksManager {
             }  else {
                 substring = tasksSplit[i].substring(1, tasksSplit[i].length() - 1);
             }
-            switch (fromString(substring).getType()) {
-                case TASK -> manager.saveTask(fromString(substring));
-                case EPIC -> manager.saveEpic((Epic)fromString(substring));
-                case SUBTASK -> manager.saveSubtask((Subtask)fromString(substring));
+            switch (taskFromString(substring).getType()) {
+                case TASK -> manager.saveTask(taskFromString(substring));
+                case EPIC -> manager.saveEpic((Epic) taskFromString(substring));
+                case SUBTASK -> manager.saveSubtask((Subtask) taskFromString(substring));
             }
         }
     }
 
-    public void saveHistoryFromString(String stringToSplit, HttpTaskManager manager) {
+    public void saveHistoryFromServer(String stringToSplit, HttpTaskManager manager) {
         String[] historySplit = stringToSplit.split(",");
         for (String s : historySplit) {
             if (s != null) {
@@ -137,5 +126,13 @@ public class HttpTaskManager extends FileBackedTasksManager {
                 manager.getInMemoryHistoryManager().add(manager.getSubtaskByID(Integer.parseInt(s)));
             }
         }
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

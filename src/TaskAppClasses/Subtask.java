@@ -18,19 +18,19 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        String toString = "SubtaskId:" + super.getId() + ", название:<" + name + ">, описание:<"
-                + description + ">, статус:<" + status +
-                ">, длительность:<" + duration + ">, дата и время старта:<";
+        String toString = "SubtaskId:" + super.getId() + ", название:" + name + ", описание:"
+                + description + ", статус:" + status +
+                ", длительность:" + duration + ", дата и время старта:";
         if (startTime == null) {
-            toString += "отсутствует>,";
+            toString += "отсутствует,";
         } else {
-            toString += startTime.format(formatter) + ">,";
+            toString += startTime.format(formatter) + ",";
         }
-         toString += " дата и время окончания:<";
+         toString += " дата и время окончания:";
         if (endTime == null) {
-            toString += "отсутствует>.";
+            toString += "отсутствует.";
         } else {
-            toString += endTime.format(formatter) + ">.";
+            toString += endTime.format(formatter) + ".";
         }
         return toString;
     }

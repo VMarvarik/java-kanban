@@ -93,18 +93,18 @@ public class Task implements Comparable<Task> {
 
     @Override
     public String toString() {
-        String toString = "TaskId:" + id + ", название:<" + name + ">, описание:<" + description + ">, статус:<" + status
-                + ">, длительность:<" + duration + ">, дата и время старта:<";
+        String toString = "TaskId:" + id + ", название:" + name + ", описание:" + description + ", статус:" + status
+                + ", длительность:" + duration + ", дата и время старта:";
         if (startTime == null) {
             toString += "отсутствует";
         } else {
             toString += startTime.format(formatter);
         }
-        toString += ">, дата и время окончания:<";
+        toString += ", дата и время окончания:";
         if (endTime == null) {
-            toString += "отсутствует>.";
+            toString += "отсутствует.";
         } else {
-            toString += endTime.format(formatter) + ">.";
+            toString += endTime.format(formatter) + ".";
         }
         return toString;
     }

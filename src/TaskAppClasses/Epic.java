@@ -77,26 +77,26 @@ public class Epic extends Task {
     @Override
     public String toString() {
         String result;
-        result = "EpicID:" + super.getId() + ", название:<" + name + ">, описание:<" + description + ">, статус:<" + status
-                + ">, длительность:<" + duration + ">, дата и время старта:<";
+        result = "EpicID:" + super.getId() + ", название:" + name + ", описание:" + description + ", статус:" + status
+                + ", длительность:" + duration + ", дата и время старта:";
 
         if (startTime == null) {
-            result += "отсутствует>,";
+            result += "отсутствует,";
         } else {
             result += startTime.format(formatter);
         }
-        result += ">, дата и время окончания:<";
+        result += ", дата и время окончания:";
         if (endTime == null) {
-            result += "отсутствует>,";
+            result += "отсутствует,";
         } else {
-            result += endTime.format(formatter) + ">,";
+            result += endTime.format(formatter) + ",";
         }
         result += " подзадачи:";
         if (subtaskList.isEmpty()) {
-            result += "<список подзадач пока пуст>";
+            result += "список подзадач пока пуст";
         } else {
-            result += "<" + subtaskList;
+            result += "" + subtaskList;
         }
-        return result + ">.";
+        return result + ".";
     }
 }

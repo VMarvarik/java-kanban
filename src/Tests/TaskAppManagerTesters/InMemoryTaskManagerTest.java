@@ -4,7 +4,6 @@ import TaskAppClasses.*;
 import TaskAppEnums.Status;
 import TaskAppEnums.Type;
 import TaskAppManagers.InMemoryTaskManager;
-import TaskAppManagers.Managers;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import java.util.ArrayList;
@@ -16,8 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
-    InMemoryTaskManager manager = Managers.getDefault();
-
+    InMemoryTaskManager manager = new InMemoryTaskManager();
     public Task create(Type type) {
         if (type.equals(Type.TASK)) {
             return new Task ("01", "01", Status.NEW, 15, "2016-11-09 10:30");
@@ -29,7 +27,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
 
     @BeforeEach
     public void beforeEach() {
-        this.manager = Managers.getDefault();
+        manager = new InMemoryTaskManager();
     }
 
     @Test
@@ -105,7 +103,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     @Test
     public void updateTask() {
         int taskId = manager.saveTask(create(Type.TASK));
-        Task newTask = new Task("1", "1", Status.NEW, 15, "2016-11-09 10:30");
+        Task newTask = new Task("1", "1", Status.NEW, 15, "2017-11-09 10:30");
         newTask.setId(taskId);
         manager.updateTask(newTask);
         assertEquals(newTask, manager.getTaskByID(taskId), "Задачи не совпадают после обновления");

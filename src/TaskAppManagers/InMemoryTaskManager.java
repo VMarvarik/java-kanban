@@ -184,9 +184,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public String getEpicSubtasks(int epicId){
+    public List<Subtask> getEpicSubtasks(int epicId){
         if (!epicHashMap.get(epicId).getSubtaskList().isEmpty()) {
-            return Arrays.toString(epicHashMap.get(epicId).getSubtaskList().toArray());
+            return epicHashMap.get(epicId).getSubtaskList();
         }
         System.out.println("Список подзадач эпика №" + epicId + "пуст.");
         return null;

@@ -7,21 +7,42 @@ import TaskAppEnums.Status;
 import TaskAppManagers.Managers;
 import TaskAppServerFunctionalityRealization.HttpTaskManager;
 import TaskAppServerFunctionalityRealization.KVServer;
-import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import static org.junit.jupiter.api.Assertions.*;
+public class HttpTaskManagerTest {
+    private KVServer kvServer;
+    HttpTaskManager httpTaskManager;
 
-public class HttpTaskManagerTest extends InMemoryTaskManagerTest {
-    @BeforeAll
-    public static void main(String[] args) throws IOException {
-        new KVServer().start();
+    @BeforeEach
+    public void beforeEach() throws IOException {
+        kvServer = new KVServer();
+        kvServer.start();
+    }
+
+    @AfterEach
+    public void afterEach() {
+        kvServer.stop();
+    }
+
+    @Test
+    public void addAnyTaskWithIntersectedTime() {
+        httpTaskManager = Managers.getDefault();
+        Task task1 = new Task("#1", "#1", Status.NEW, 15,"2001-11-09 10:30");
+        httpTaskManager.saveTask(task1);
+        Task task2 = new Task("#2", "#2", Status.NEW, 15,"2000-11-09 10:30");
+        httpTaskManager.saveTask(task2);
+        //Добавляем задачу с пересекающим временем
+        Task task3 = new Task("#3", "#3", Status.NEW, 15,"2000-11-09 10:40");
+        assertEquals(0, httpTaskManager.saveTask(task3));
     }
 
     @Test
     public void saveAndLoadHttpTaskManager() {
-        HttpTaskManager httpTaskManager = Managers.getDefault(); //Создаем менеджер
+        httpTaskManager = Managers.getDefault();
         httpTaskManager.setKey("varya"); //Создаем ключ пользователя
         //Создаем различные задачи
         Task task1 = new Task("1", "1", Status.NEW, 10, "2016-11-09 10:30");
