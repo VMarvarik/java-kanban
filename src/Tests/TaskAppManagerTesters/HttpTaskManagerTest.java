@@ -15,12 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpTaskManagerTest {
     private KVServer kvServer;
-    HttpTaskManager httpTaskManager;
+    HttpTaskManager httpTaskManager = Managers.getDefault();
 
     @BeforeEach
     public void beforeEach() throws IOException {
         kvServer = new KVServer();
         kvServer.start();
+        httpTaskManager = Managers.getDefault();
     }
 
     @AfterEach
@@ -30,7 +31,6 @@ public class HttpTaskManagerTest {
 
     @Test
     public void addAnyTaskWithIntersectedTime() {
-        httpTaskManager = Managers.getDefault();
         Task task1 = new Task("#1", "#1", Status.NEW, 15,"2001-11-09 10:30");
         httpTaskManager.saveTask(task1);
         Task task2 = new Task("#2", "#2", Status.NEW, 15,"2000-11-09 10:30");
@@ -42,7 +42,6 @@ public class HttpTaskManagerTest {
 
     @Test
     public void saveAndLoadHttpTaskManager() {
-        httpTaskManager = Managers.getDefault();
         httpTaskManager.setKey("varya"); //Создаем ключ пользователя
         //Создаем различные задачи
         Task task1 = new Task("1", "1", Status.NEW, 10, "2016-11-09 10:30");
