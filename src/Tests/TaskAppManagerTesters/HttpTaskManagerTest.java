@@ -31,6 +31,7 @@ public class HttpTaskManagerTest {
 
     @Test
     public void addAnyTaskWithIntersectedTime() {
+        httpTaskManager.setKey("varya");
         Task task1 = new Task("#1", "#1", Status.NEW, 15,"2001-11-09 10:30");
         httpTaskManager.saveTask(task1);
         Task task2 = new Task("#2", "#2", Status.NEW, 15,"2000-11-09 10:30");
